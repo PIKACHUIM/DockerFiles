@@ -116,7 +116,7 @@ fi
 
 # Build Images -------------------------------------------------------------------
 sudo docker rmi $OS_TYPE:$VERSION-server
-sudo docker build . \
+sudo docker build . -f ./dockers/Ubuntu/Base \
 --build-arg OS_VERSION=22.04 \
 --build-arg OS_SYSTEMS=ubuntu \
 -t $OS_TYPE:$VERSION-server
