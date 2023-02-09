@@ -22,7 +22,7 @@ RUN apt update \
  && mkdir -p /var/run/sshd \
  && mkdir -p /root/.ssh/
 # Allow SSH PAM & Password Login ------------------------------------------------------------------
-RUN echo "PermitRootLogin yes" > /etc/ssh/sshd_config \
+RUN echo "PermitRootLogin yes" >S> /etc/ssh/sshd_config \
  && chmod +x /run.sh && cat /etc/pam.d/sshd \
  && rm /etc/pam.d/sshd
 COPY configs/ssh-login/sshd /etc/pam.d/

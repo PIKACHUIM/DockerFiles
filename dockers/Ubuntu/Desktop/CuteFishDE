@@ -67,8 +67,44 @@ RUN cd ~/Downloads/cutefish                                   \
 &&  cd statusbar && dpkg-buildpackage -uc -us -b -j16
 RUN cd ~/Downloads/cutefish                                   \
 &&  git clone https://github.com/cutefishos/core              \
-&&  cd core && dpkg-buildpackage -uc -us -b -j16              \
-&&  cd ~/Downloads/cutefish && sudo apt-get install ./*.deb -y
+&&  cd core && dpkg-buildpackage -uc -us -b -j16              
+RUN cd ~/Downloads/cutefish && sudo apt-get install ./*.deb -y
+RUN apt install -y libpam0g-dev libx11-dev qtbase5-dev        \ 
+                   qtdeclarative5-dev qml-module-qtquick2     \
+                   qml-module-qtquick-controls2 qttools5-dev  \
+                   extra-cmake-modules qtquickcontrols2-5-dev \
+                   qtdeclarative5-dev qttools5-dev-tools      
+RUN cd ~/Downloads/cutefish                                   \
+&&  git clone https://github.com/cutefishos/calculator        \
+&&  cd calculator && mkdir build && cd build                  \
+&&  cmake .. && make -j16 && make install
+RUN cd ~/Downloads/cutefish                                   \
+&&  git clone https://github.com/cutefishos/icons             \
+&&  cd icons && mkdir build && cd build                       \
+&&  cmake .. && make -j16 && make install
+RUN cd ~/Downloads/cutefish                                   \
+&&  git clone https://github.com/cutefishos/screenlocker      \
+&&  cd screenlocker && mkdir build && cd build                \
+&&  cmake .. && make -j16 && make install
+RUN cd ~/Downloads/cutefish                                   \
+&&  git clone https://github.com/cutefishos/sddm-theme        \
+&&  cd sddm-theme && mkdir build && cd build                  \
+&&  cmake .. && make -j16 && make install
+RUN cd ~/Downloads/cutefish                                   \
+&&  git clone https://github.com/cutefishos/debinstaller      \
+&&  cd debinstaller && mkdir build && cd build                \
+&&  cmake .. && make -j16 && make install
+RUN cd ~/Downloads/cutefish                                   \
+&&  git clone https://github.com/cutefishos/gtk-themes        \
+&&  cd gtk-themes && mkdir build && cd build                  \
+&&  cmake .. && make -j16 && make install
+RUN apt install -y libmpv-dev qtdeclarative5-dev              \
+                   qtquickcontrols2-5-dev
+RUN cd ~/Downloads/cutefish                                   \
+&&  git clone https://github.com/cutefishos/videoplayer       \
+&&  cd videoplayer && mkdir build && cd build                 \
+&&  cmake .. && make -j16 && make install
+
 
 # Install Xserver ---------------------------------------------
 RUN apt-get update && DEBIAN_FRONTEND=noninteractive          \
@@ -106,75 +142,95 @@ RUN dpkg -i virtualgl_amd64.deb                               \
 # Install Nomachine -------------------------------------------
 COPY binfile/nomachine_amd64.deb /
 RUN groupadd -r -g 2000 user                                  \
-&&  useradd -u 2000 -r -g user user                           \
+&&  useradd -u 2000 -m -r -g user user                        \
 &&  dpkg -i /nomachine_amd64.deb && rm /nomachine_amd64.deb   \
 &&  sed -i '$a PhysicalDesktopAuthorization 0'                \
     /usr/NX/etc/node.cfg                                      \
 &&  sed -i '$a WaylandModes "egl,compositor,drm"'             \
     /usr/NX/etc/node.cfg
 
-## Install Softwares -------------------------------------------
-#RUN apt install -y firefox kwrite vlc transmission-qt  \
-#                   gimp gwenview   
+
                    
 # Install x11vnc ----------------------------------------------
 RUN mkdir ~/.vnc && chmod 700 ~/.vnc && touch ~/.vnc/passwd
 RUN touch  /root/.Xauthority
-#RUN apt install -y x11vnc 
-#RUN x11vnc -storepasswd PIKAPIKA ~/.vnc/passwd
-RUN apt install -y tightvncserver 
-RUN echo "PIKAPIKA\nPIKAPIKA\n" | vncpasswd
+RUN apt install -y x11vnc 
+RUN x11vnc -storepasswd PIKAPIKA ~/.vnc/passwd
+#RUN apt install -y tightvncserver 
+#RUN echo "PIKAPIKA\nPIKAPIKA\n" | vncpasswd
 
 
 # Clean -------------------------------------------------------
 RUN rm -rf ~/Downloads/*
 RUN apt clean
 
+# Install Softwares -------------------------------------------
+RUN apt install -y firefox kwrite vlc transmission-qt         \
+                   gimp gwenview fonts-liberation libu2f-udev
+RUN LINK1="https://dl.google.com/linux/direct/"               \
+&&  LINK2="google-chrome-stable_current_amd64.deb"            \
+&&  wget "${LINK1}${LINK2}"
+RUN dpkg -i google-chrome-stable_current_amd64.deb
+RUN rm google-chrome-stable_current_amd64.deb
+
 # Copy Run Time Script ----------------------------------------
 # VNC ---------------------------------------------------------
-RUN apt install -y dbus-x11
-RUN echo 'session=cutefish-xsession' > ~/.vnc/config
+RUN apt install -y dbus-x11 xinit neofetch
+RUN echo 'session=xinit /bin/cutefish-session' > ~/.vnc/config
 RUN echo 'geometry=1920x1080' >> ~/.vnc/config
 RUN echo 'alwaysshared' >> ~/.vnc/config
 RUN echo '#!/bin/sh' > ~/.vnc/xstartup
-RUN echo 'export DISPLAY=:0' >> ~/.vnc/xstartup
-RUN echo '[ -x /etc/vnc/xstartup ] && exec /etc/vnc/xstartup' \
-          >> ~/.vnc/xstartup
-RUN echo '[ -r $HOME/.Xresources ] && xrdb $HOME/.Xresources' \
-          >> ~/.vnc/xstartup
-RUN echo 'vncconfig -iconic &' >> ~/.vnc/xstartup
-RUN echo 'dbus-launch --exit-with-session cutefish-session &' \
-          >> ~/.vnc/xstartup
-RUN echo 'dbus-launch --exit-with-session cutefish-filemanager --desktop &' \
-          >> ~/.vnc/xstartup
-RUN echo 'dbus-launch --exit-with-session cutefish-dock &' \
-          >> ~/.vnc/xstartup
-COPY configs/x11server/sddm.conf /etc/
+RUN echo 'export DISPLAY=:1' >> ~/.vnc/xstartup
+RUN echo 'exec xinit /bin/cutefish-session &' >> ~/.vnc/xstartup
+#COPY configs/x11server/sddm.conf /etc/
 #RUN echo '127.0.0.1 localhost' >> /etc/hosts
 #RUN echo '127.0.0.1 pika_test' >> /etc/hosts
 RUN chmod -R +x ~/.vnc/*
-#RUN apt install -y sddm 
+#RUN apt install -y sddm neofetch
 #RUN systemctl enable sddm  
 # Start UP ----------------------------------------------------
 RUN echo '#!/bin/bash' > /run.sh
 RUN echo 'export DISPLAY=:0' >> /run.sh
 RUN echo 'echo Starting Dbus ----------------------' >> /run.sh
 RUN echo '/etc/init.d/dbus start' >> /run.sh
-RUN echo 'echo Starting SDDM ----------------------' >> /run.sh
-RUN echo 'service sddm start' >> /run.sh
+#RUN echo 'echo Starting SDDM ----------------------' >> /run.sh
+#RUN echo 'service sddm start' >> /run.sh
 RUN echo 'echo Starting NX ------------------------' >> /run.sh
 RUN echo '/etc/NX/nxserver --startup' >> /run.sh
 RUN echo '/etc/NX/nxserver --restart ' >> /run.sh
 RUN echo 'echo Starting VNCS ----------------------' >> /run.sh
-RUN echo 'USER=root vncserver -kill :0' >> /run.sh
-RUN echo 'rm -rf /tmp/.X11-unix/X0' >> /run.sh
-RUN echo 'USER=root vncserver :0' >> /run.sh
+RUN echo 'export DISPLAY=:1' >> /run.sh
+#RUN echo 'USER=root vncserver -kill :1' >> /run.sh
+#RUN echo 'rm -rf /tmp/.X11-unix/X0' >> /run.sh
+#RUN echo 'USER=root vncserver :1' >> /run.sh
+# User VNC ---------------------------------------------------------------
+#RUN mkdir -p /home/user/.vnc/ && touch /home/user/.vnc/passwd
+#RUN chown -R user /home/user/
+#RUN x11vnc -storepasswd PIKAPIKA /home/user/.vnc/passwd
+#RUN echo 'session=xinit /bin/cutefish-session' > /home/user/.vnc/config
+#RUN echo 'geometry=1920x1080' >> /home/user/.vnc/config
+#RUN echo 'alwaysshared' >> /home/user/.vnc/config
+#RUN echo '#!/bin/sh' > /home/user/.vnc/xstartup
+#RUN echo 'export DISPLAY=:0' >> /home/user/.vnc/xstartup
+#RUN echo 'exec xinit /bin/cutefish-session &' >> /home/user/.vnc/xstartup
+#RUN touch  /home/user/.Xauthority
+#RUN chown user /home/user/.Xauthority
+#RUN TEXT1="su user -c 'x11vnc -auth guess -once -loop -noxdamage -repeat" \
+#&&  TEXT2=" -rfbauth /home/user/.vnc/passwd -rfbport 5900 -shared &'"   \
+#&&  echo "${TEXT1}${TEXT2}" >> /run.sh
+#RUN TEXT1="x11vnc -display :1 -auth guess -once -loop -noxdamage -repeat" \
+#&&  TEXT2=" -rfbauth ~/.vnc/passwd -rfbport 5900 -shared &"   \
+#&&  echo "${TEXT1}${TEXT2}" >> /run.sh
 RUN echo 'echo Starting SSHD ----------------------' >> /run.sh
-RUN echo '/usr/sbin/sshd -D' >> /run.sh
-#RUN echo 'x11vnc -forever -usepw -create' >> /run.sh
+RUN echo '/usr/sbin/sshd' >> /run.sh
+RUN echo 'echo Start Desktop ----------------------' >> /run.sh
+RUN echo 'export DISPLAY=:0'>> /run.sh
+RUN echo 'xinit /bin/cutefish-session &' >> /run.sh
+
+# User --------------------------------------------------------
+RUN echo "user ALL=(ALL)      ALL" >> /etc/sudoers
 
 # Port Mapping ------------------------------------------------
 EXPOSE 4000/tcp
-EXPOSE 5900/udp
-EXPOSE 5901/udp
+#EXPOSE 5900/udp
 CMD ["/run.sh"]
