@@ -225,7 +225,7 @@ RUN echo 'echo Starting SSHD ----------------------' >> /run.sh
 RUN echo '/usr/sbin/sshd' >> /run.sh
 RUN echo 'echo Start Desktop ----------------------' >> /run.sh
 RUN echo 'export DISPLAY=:0'>> /run.sh
-RUN echo 'xinit /bin/cutefish-session &' >> /run.sh
+RUN echo 'xinit /bin/cutefish-session' >> /run.sh
 
 # User --------------------------------------------------------
 RUN echo "user ALL=(ALL)      ALL" >> /etc/sudoers

@@ -32,6 +32,7 @@ sudo docker run -it \
 --privileged=true \
 --cap-add=SYS_PTRACE \
 --shm-size=1024m \
+--hostname=archos_test \
 -v /var/run/dbus:/var/run/dbus \
 archos:22.04-cuteos
 
@@ -40,5 +41,27 @@ sudo docker exec archos_test /bin/bash -c "echo user:user | chpasswd"
 sudo docker exec -it archos_test /bin/bash
 
 docker stop $(docker ps -a  | grep /bin/sh | awk '{print $1}')
-docker rm $(docker ps -a -q)
-docker rmi $(docker images -a -q)
+docker rm $(docker ps -a  | grep /bin/sh | awk '{print $1}')
+docker rmi $(docker images -a | grep none | awk '{print $3}')
+
+#Ubuntu镜像 ========================
+sudo docker pull pikachuim/ubuntu:22.04-cuteos
+sudo docker run -itd \
+--network=host \
+--privileged=true \
+--cap-add=SYS_PTRACE \
+--shm-size=1024m \
+--name=cuteos_test \
+pikachuim/ubuntu:22.04-cuteos
+#Arch镜像 ==========================
+sudo docker pull pikachuim/archos:22.04-cuteos
+sudo docker run -itd \
+--network=host \
+--privileged=true \
+--cap-add=SYS_PTRACE \
+--shm-size=1024m \
+--name=cuteos_test \
+pikachuim/archos:22.04-cuteos
+#连接方式 ==========================
+sudo docker exec cuteos_test /bin/bash -c "echo root:设置一个密码 | chpasswd"
+#然后用NoMachine连接IP:4000，用户名root，密码是上一条设置的

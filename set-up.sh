@@ -7,33 +7,44 @@ echo "   │            Copyright © 2023 Pikachu, All Rights Reserved          
 echo "   └──────────────────────────────────────────────────────────────────────┘"
 echo 
 echo "   ============================Available System============================"
-echo "      [1] Ubuntu    [ √ Server / √ CuteFishDE / √ KDE / √ GNOME / √ DDE ]  "
-echo "      [2] Debian    [ √ Server / √ CuteFishDE / √ KDE / √ GNOME / √ DDE ]  "
-echo "      [3] Centos    [ √ Server / × CuteFishDE / × KDE / × GNOME / × DDE ]  "
-echo "      [4] Deepin    [ √ Server / √ CuteFishDE / √ KDE / √ GNOME / √ DDE ]  "
-echo "      [5] ArchLinux [ √ Server / √ CuteFishDE / √ KDE / √ GNOME / √ DDE ]  "
-echo "   ========================================================================"
-echo
-echo
-echo "   ============================Available Desktop==========================="
-echo "      [1] Servers No Desktop [ √ SSH / × GUI APPs / × NoMachine / × VNC ]  "
-echo "      [2] Desktop CuteFishDE [ √ SSH / √ GUI APPs / √ NoMachine / √ VNC ]  "
-echo "      [3] Desktop KDE Plasma [ √ SSH / √ GUI APPs / √ NoMachine / √ VNC ]  "
-echo "      [4] Desktop GNOME Base [ √ SSH / √ GUI APPs / √ NoMachine / √ VNC ]  "
-echo "      [5] Desktop Deepin DDE [ √ SSH / √ GUI APPs / √ NoMachine / √ VNC ]  "
+echo "      [1] Ubuntu    [ √ Server / √ CuteFishDE / × KDE / × GNOME / × DDE ]  "
+echo "      [2] ArchOS    [ √ Server / √ CuteFishDE / × KDE / × GNOME / × DDE ]  "
+#echo "      [X] Debian    [ √ Server / √ CuteFishDE / √ KDE / √ GNOME / √ DDE ]  "
+#echo "      [X] Centos    [ √ Server / × CuteFishDE / × KDE / × GNOME / × DDE ]  "
+#echo "      [X] Deepin    [ √ Server / √ CuteFishDE / √ KDE / √ GNOME / √ DDE ]  "
 echo "   ========================================================================"
 echo 
-echo -n "   Enter Docker OS Type(ubuntu): "
+echo -n "   Choice Platforms Type Number(1): "
 read OS_TYPE
-echo 
-echo 
+if [ ! $OS_TYPE ]; then
+  echo Note: OS_TYPE='ubuntu'
+  OS_TYPE='ubuntu'
+fi
+echo
 echo "   ============================Available Version==========================="
 echo "      [1] 22.04 Jammy Jellyfish  [ √ Now Recommend / Support Until 2032 ]  "
 echo "      [2] 20.04 Focal Fossa      [ × Not Recommend / Support Until 2030 ]  "
 echo "      [3] 18.04 Bionic Beaver    [ × Not Recommend / Support Until 2028 ]  "
 echo "   ========================================================================"
-echo -n "   Enter Docker Version(22.04): "
+echo
+echo -n "   Choice System Version Number(1): "
 read VERSION
+if [ ! $VERSION ]; then
+  echo Note: VERSION='22.04'
+  VERSION='22.04'
+fi
+echo
+echo "   ============================Available Desktop==========================="
+echo "      [1] Servers No Desktop [ √ SSH / × GUI APPs / × NoMachine / × VNC ]  "
+echo "      [2] Desktop CuteFishDE [ √ SSH / √ GUI APPs / √ NoMachine / √ VNC ]  "
+#echo "      [X] Desktop KDE Plasma [ √ SSH / √ GUI APPs / √ NoMachine / √ VNC ]  "
+#echo "      [X] Desktop GNOME Base [ √ SSH / √ GUI APPs / √ NoMachine / √ VNC ]  "
+#echo "      [X] Desktop Deepin DDE [ √ SSH / √ GUI APPs / √ NoMachine / √ VNC ]  "
+echo "   ========================================================================"
+echo
+echo -n "   Choice GUI Environments Type(1): "
+read GUI_ENV
+echo
 # --------------------------------------------------------------------------------
 echo "   ===========================Config Port Mapping=========================="
 echo -n "请输入容器ID，留空需要手动配置端口  "
@@ -105,14 +116,8 @@ do
   fi
 done
 # NULL Data ----------------------------------------------------------------------
-if [ ! $OS_TYPE ]; then
-  echo Note: OS_TYPE='ubuntu'
-  OS_TYPE='ubuntu'
-fi
-if [ ! $VERSION ]; then
-  echo Note: VERSION='22.04'
-  VERSION='22.04'
-fi
+
+
 
 # Build Images -------------------------------------------------------------------
 sudo docker rmi $OS_TYPE:$VERSION-server
