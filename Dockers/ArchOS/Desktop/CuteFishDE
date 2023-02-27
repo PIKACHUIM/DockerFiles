@@ -1,0 +1,41 @@
+FROM pikachuim/archos:build-server
+# -------------------------------------------------------------------------
+RUN pacman -Syy --noconfirm
+RUN pacman -S --noconfirm cutefish
+RUN pacman -S --noconfirm noto-fonts noto-fonts-cjk
+# NoMachine ---------------------------------------------------------------
+RUN sudo pacman -S base-devel --noconfirm
+RUN git clone https://aur.archlinux.org/nomachine.git
+RUN chown -R user nomachine
+RUN sudo pacman -S openssh nawk rpm-tools dkms --noconfirm
+RUN sudo pacman -S proxychains --noconfirm
+RUN cat /etc/proxychains.conf
+RUN cd nomachine && ls -l
+RUN echo -e "[ProxyList]\nsocks5 10.1.1.1 1090" > /etc/proxychains.conf
+RUN cd nomachine && su user -c 'echo -e "PIKAPIKA" | proxychains makepkg'
+RUN cd nomachine && pacman -U nomachine-*-x86_64.pkg.tar.zst --noconfirm
+# VNC --------------------------------------------------------------------
+RUN sudo pacman -S tigervnc --noconfirm
+&&  echo -e "PIKAPIKA\nPIKAPIKA" | vncpasswd
+
+&&  echo 'session=cutefish-xsession' >> ~/.vnc/config
+&&  echo 'geometry=1920x1080' >> ~/.vnc/config
+&&  echo 'alwaysshared' >> ~/.vnc/config
+&&  touch /root/.Xauthority
+&&  chmod 700 ~/.vnc
+&&  ls -l /usr/share/xsessions/
+&&  touch /root/.Xauthority
+# More Software ----------------------------------------------------------
+RUN su user -c "echo -e "PIKAPIKA" | yaourt aur/google-chrome --noconfirm"
+# Run --------------------------------------------------------------------
+RUN echo '#!/bin/bash' > /run.sh
+&&  echo 'vncserver :0' >> /run.sh
+&&  echo '/etc/NX/nxserver --startup' >> /run.sh
+&&  echo '/etc/NX/nxserver --restart' >> /run.sh
+&&  echo 'export $(dbus-launch)' >> /run.sh
+&&  echo '/usr/sbin/sshd -D' >> /run.sh
+&&  chmod +x /run.sh
+# Port Mapping -----------------------------------------------------------
+EXPOSE 4000/tcp
+EXPOSE 5900/tcp
+CMD ["/run.sh"]
