@@ -33,7 +33,7 @@ exit 0
 # Ubuntu --------------------------------------------
 sudo docker stop ubuntu_test
 sudo docker rm ubuntu_test
-sudo docker run -itd \
+sudo docker run -it \
 --network=host \
 --name=ubuntu_test \
 --privileged=true \
@@ -64,3 +64,8 @@ sudo docker exec -it ubuntu_test /bin/bash
 sudo docker exec archos_test /bin/bash -c "echo root:pika | chpasswd"
 sudo docker exec archos_test /bin/bash -c "echo user:user | chpasswd"
 sudo docker exec -it archos_test /bin/bash
+
+# 清理内容 ----------------------------------------------------------
+docker stop ubuntu_test
+docker stop archos_test
+docker 

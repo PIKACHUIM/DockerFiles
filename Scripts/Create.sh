@@ -61,11 +61,14 @@ if [ ! $USE_PID ]; then
   IN_PORT=""
 else
   PM_SSHS="1${USE_PID}22";
+  PM_NXSR="1${USE_PID}40";
+  PM_VNCS="1${USE_PID}41";
   IN_PORT="q";
   D_NAMES="s1v3-d${USE_PID}-user"
   TMP1MAP="-p 1${USE_PID}01-1${USE_PID}21:1${USE_PID}01-1${USE_PID}21";
-  TMP2MAP="-p 1${USE_PID}23-1${USE_PID}99:1${USE_PID}23-1${USE_PID}99";
-  PORTMAP="${TMP1MAP} ${TMP2MAP}";
+  TMP2MAP="-p 1${USE_PID}23-1${USE_PID}39:1${USE_PID}23-1${USE_PID}39";
+  TMP3MAP="-p 1${USE_PID}42-1${USE_PID}99:1${USE_PID}42-1${USE_PID}99";
+  PORTMAP="${TMP1MAP} ${TMP2MAP} ${TMP3MAP}";
 fi
 
 # --------------------------------------------------------------------------------
@@ -135,29 +138,21 @@ elif [ $CONFIRM == 'y' ]; then
   echo -e "   ========================================================================";
 fi
 
-# Build Images -------------------------------------------------------------------
-#sudo docker rmi $OS_TYPE:$VERSION-server
-#sudo docker build Dockers/ -f ./Dockers/Ubuntu/Base \
-#--build-arg OS_VERSION=22.04 \
-#--build-arg OS_SYSTEMS=ubuntu \
-#-t $OS_TYPE:$VERSION-server
-
 # RUN Images ---------------------------------------------------------------------
-#sudo docker run -itd --privileged=true \
-#--name $D_NAMES \
-#-h $D_NAMES.13.cd1.pika.wiki \
-#$PORTMAP \
-#-p $PM_SSHS:22 \
-#$OS_TYPE:$VERSION-server
-
-# Message ------------------------------------------------------------------------
-
-D_PASSW=$(openssl rand -hex 12)
+sudo docker run -itd --privileged=true \
+--name $D_NAMES \
+-h $D_NAMES.13.cd1.pika.wiki \
+$PORTMAP \
+-p $PM_SSHS:22 \
+-p $PM_NXSR:4000 \
+-p $PM_VNCS:5900 \
+pikachuim/$OS_TYPE:$VERSION-server
 
 # Password and Output ------------------------------------------------------------
-#sudo docker exec ubuntu_test /bin/bash -c "echo root:${D_PASSW} | chpasswd"
-#sudo docker exec ubuntu_test /bin/bash -c "echo user:${D_PASSW} | chpasswd"
-#echo Password: $D_NAMES $D_PASSW >> ~/DockerUsers.conf
+D_PASSW=$(openssl rand -hex 12)
+sudo docker exec ubuntu_test /bin/bash -c "echo root:${D_PASSW} | chpasswd"
+sudo docker exec ubuntu_test /bin/bash -c "echo user:${D_PASSW} | chpasswd"
+echo Password: $D_NAMES $D_PASSW >> ~/DockerUsers.conf
 clear
 echo "     ──────────────────────────────────────────────────────────────────────"
 echo "     Congratulations! Your Docker Container has been Created Successfully! "             

@@ -12,10 +12,11 @@ LABEL Version=${OS_VERSION}
 LABEL Description=${OS_MESSAGE}
 # Basic Software-----------------------------------------------------------------------------------
 COPY configs/pacman/cn.conf /etc/
-RUN cat /etc/cn.conf >> /etc/pacman.conf
-RUN pacman -S --noconfirm sudo
 RUN cat /etc/pacman.d/mirrorlist
-RUN pacman -Syy && pacman -S yay --noconfirm
+RUN cat /etc/cn.conf >> /etc/pacman.conf
+RUN pacman -Syy 
+RUN pacman -S --noconfirm sudo
+RUN pacman -S yay --noconfirm
 RUN pacman -S yaourt --noconfirm
 RUN pacman -S base-devel --noconfirm 
 RUN pacman -S git --noconfirm

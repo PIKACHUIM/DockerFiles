@@ -101,8 +101,8 @@ RUN apt-get update && apt install -y cmake build-essential    \
 &&  git clone https://github.com/cutefishos/videoplayer       \
 &&  cd videoplayer && mkdir build && cd build                 \
 &&  cmake .. && make -j16 && make install                     \
-&&  rm -rf ~/Downloads/*                                      
-RUN apt-get pruge                                             \
+&&  rm -rf ~/Downloads/*                                      \                                     
+&&  apt-get purge  -y --auto-remove                           \
                    libkf5screen-dev libqt5sensors5-dev        \
                    libxcb-icccm4-dev libmpv-dev               \
                    libkdecorations2-dev  libdbusmenu-qt5-dev  \
@@ -128,8 +128,7 @@ RUN apt-get pruge                                             \
                    qttools5-dev qtquickcontrols2-5-dev        \
                    qtdeclarative5-dev qml-module-qtquick2     \
                    qtbase5-private-dev                        \               
-&&  apt clean
-
+&& apt upgrade -y && apt clean
 
 # Install Xserver ---------------------------------------------
 RUN apt-get update && DEBIAN_FRONTEND=noninteractive          \
@@ -151,9 +150,9 @@ RUN echo 'load-module module-native-protocol-unix '           \
 # Install OpenVGL----------------------------------------------
 COPY binfile/virtualgl_amd64.deb /
 RUN apt update && DEBIAN_FRONTEND=noninteractive              \
-    apt install -y --no-install-recommends                    \
-    libvdpau1 mesa-vdpau-drivers libegl1-mesa                 \
-&&  dpkg -i virtualgl_amd64.deb                               \
+    apt install -y libvdpau1 mesa-vdpau-drivers libegl1-mesa  \
+                   libglu1-mesa                 
+RUN dpkg -i virtualgl_amd64.deb                               \
 &&  rm virtualgl_amd64.deb                                    \
 &&  echo 'XAUTHORITY=$HOME/.Xauthority.docker' >              \
          /etc/profile.d/Xauthority-fix.sh                     \
@@ -165,9 +164,7 @@ RUN apt update && DEBIAN_FRONTEND=noninteractive              \
 
 # Install Nomachine -------------------------------------------
 COPY binfile/nomachine_amd64.deb /
-RUN groupadd -r -g 2000 user                                  \
-&&  useradd -u 2000 -m -r -g user user                        \
-&&  dpkg -i /nomachine_amd64.deb && rm /nomachine_amd64.deb   \
+RUN dpkg -i /nomachine_amd64.deb && rm /nomachine_amd64.deb   \
 &&  sed -i '$a PhysicalDesktopAuthorization 0'                \
     /usr/NX/etc/node.cfg                                      \
 &&  sed -i '$a WaylandModes "egl,compositor,drm"'             \
@@ -176,76 +173,80 @@ RUN groupadd -r -g 2000 user                                  \
 # Install Softwares -------------------------------------------
 RUN apt install -y software-properties-common                 \                
                    apt-transport-https wget                   \
-&&  wget -q https://packages.microsoft.com/keys/microsoft.asc \
+                   firefox kwrite vlc transmission-qt         \
+                   gimp gwenview fonts-liberation libu2f-udev
+RUN wget -q https://packages.microsoft.com/keys/microsoft.asc \
     -O- | sudo apt-key add -                                  \
 &&  TEXT1="deb [arch=amd64] https://packages.microsoft.com/"  \
 &&  TEXT2="repos/vscode stable main"                          \
 &&  add-apt-repository "${TEXT1}${TEXT2}"                     \
-&&  apt install code                                          \
-&&  apt install -y firefox kwrite vlc transmission-qt         \
-                   gimp gwenview fonts-liberation libu2f-udev \
 &&  LINK1="https://dl.google.com/linux/direct/"               \
 &&  LINK2="google-chrome-stable_current_amd64.deb"            \
-&&  wget "${LINK1}${LINK2}"                                   \
-&&  dpkg -i google-chrome-stable_current_amd64.deb            \
+&&  wget "${LINK1}${LINK2}"                                   
+RUN dpkg -i google-chrome-stable_current_amd64.deb            \
 &&  rm google-chrome-stable_current_amd64.deb                 \
+&&  apt install -y code               
 
 # Install VNC --------------------------------------------------
+# X11VNC -------------------------------------------------------
 #RUN mkdir ~/.vnc && chmod 700 ~/.vnc && touch ~/.vnc/passwd   \
 #&&  touch  /root/.Xauthority                                  \
 #&&  apt install -y x11vnc                                     \
-#RUN mkdir -p /home/user/.vnc/ && touch /home/user/.vnc/passwd
-#RUN chown -R user /home/user/
-#RUN x11vnc -storepasswd PIKAPIKA /home/user/.vnc/passwd
-#RUN echo 'session=xinit /bin/cutefish-session' > /home/user/.vnc/config
-#RUN echo 'geometry=1920x1080' >> /home/user/.vnc/config
-#RUN echo 'alwaysshared' >> /home/user/.vnc/config
-#RUN echo '#!/bin/sh' > /home/user/.vnc/xstartup
-#RUN echo 'export DISPLAY=:0' >> /home/user/.vnc/xstartup
-#RUN echo 'exec xinit /bin/cutefish-session &' >> /home/user/.vnc/xstartup
-#RUN touch  /home/user/.Xauthority
-#RUN chown user /home/user/.Xauthority
+#&&  mkdir -p /home/user/.vnc/ && touch /home/user/.vnc/passwd \
+#&&  chown -R user /home/user/                                 \
+#&&  x11vnc -storepasswd PIKAPIKA /home/user/.vnc/passwd       \
+#&&  echo 'session=xinit /bin/cutefish-session'                \
+#    > /home/user/.vnc/config                                  \
+#&&  echo 'geometry=1920x1080' >> /home/user/.vnc/config       \
+#&&  echo 'alwaysshared' >> /home/user/.vnc/config             \
+#&&  echo '#!/bin/sh' > /home/user/.vnc/xstartup               \
+#&&  echo 'export DISPLAY=:0' >> /home/user/.vnc/xstartup      \
+#&&  echo 'exec xinit /bin/cutefish-session &' >>              \
+#    /home/user/.vnc/xstartup                                  \
+#&&  touch  /home/user/.Xauthority                             \              
+#&&  chown user /home/user/.Xauthority
 
-RUN apt-get update && apt install -y tightvncserver            \
-&&  echo 'session=xinit /bin/cutefish-session' > ~/.vnc/config \
-&&  echo 'geometry=1920x1080' >> ~/.vnc/config                 \
-&&  echo 'alwaysshared' >> ~/.vnc/config                       \
-&&  echo '#!/bin/sh' > ~/.vnc/xstartup                         \
-&&  echo 'export DISPLAY=:1' >> ~/.vnc/xstartup                \
-&&  echo 'exec xinit /bin/cutefish-session &'                  \
+# TigerVNC ----------------------------------------------------
+RUN apt-get update && apt install -y tightvncserver           \
+&& mkdir -p ~/.vnc                                            \
+&& echo 'session=xinit /bin/cutefish-session' > ~/.vnc/config \
+&& echo 'geometry=1920x1080' >> ~/.vnc/config                 \
+&& echo 'alwaysshared' >> ~/.vnc/config                       \
+&& echo '#!/bin/sh' > ~/.vnc/xstartup                         \
+&& echo 'export DISPLAY=:0' >> ~/.vnc/xstartup                \
+&& echo 'exec xinit /bin/cutefish-session &'                  \
     >> ~/.vnc/xstartup
+RUN touch  /root/.Xauthority && mkdir -p  /home/user/         \
+&&  touch  /home/user/.Xauthority                             \              
+&&  chown user /home/user/.Xauthority                         
+RUN echo -e "root:root\nroot\nn\n | USER=root vncserver :0"
 
 # Start UP ----------------------------------------------------
-RUN echo '#!/bin/bash' > /run.sh
-RUN echo 'export DISPLAY=:0' >> /run.sh
-RUN echo 'echo Starting Dbus ----------------------' >> /run.sh
-RUN echo '/etc/init.d/dbus start' >> /run.sh
-RUN echo 'echo Starting NX ------------------------' >> /run.sh
-RUN echo '/etc/NX/nxserver --startup' >> /run.sh
-RUN echo '/etc/NX/nxserver --restart ' >> /run.sh
-               
-# User VNC ----------------------------------------------------
-# TigerVNC ----------------------------------------------------
-RUN echo 'echo Starting VNCS --------------------' >> /run.sh \
+RUN echo '#!/bin/bash' > /run.sh                              \
+&&  echo 'export DISPLAY=:0' >> /run.sh                       \
+&&  echo 'echo Starting Dbus --------------------' >> /run.sh \
+&&  echo '/etc/init.d/dbus start' >> /run.sh                  \
+&&  echo 'echo Starting NX ----------------------' >> /run.sh \
+&&  echo '/etc/NX/nxserver --startup' >> /run.sh              \
+&&  echo '/etc/NX/nxserver --restart ' >> /run.sh             \
+# User VNC ---------------------------------------------------\
+# TigerVNC ---------------------------------------------------\
+&&  echo 'echo Starting VNCS --------------------' >> /run.sh \
 &&  echo 'export DISPLAY=:0' >> /run.sh                       \
 &&  echo 'USER=root vncserver -kill :0' >> /run.sh            \
 &&  echo 'rm -rf /tmp/.X11-unix/X0' >> /run.sh                \
-&&  echo 'USER=root vncserver :0' >> /run.sh   
-# X11VNC ------------------------------------------------------
-#RUN TEXT1="x11vnc -display :1 -auth guess -once -loop "      \
+&&  echo 'USER=root vncserver :0' >> /run.sh                  \
+# X11VNC -----------------------------------------------------\
+&&  TEXT1="x11vnc -display :0 -auth guess -once -loop "       \
 #&&  TEXT2=" -noxdamage -repeat -rfbauth ~/.vnc/passwd "      \
 #&&  TEXT3=" -rfbport 5900 -shared &"                         \
-#&&  echo "${TEXT1}${TEXT2}${TEXT3}" >> /run.sh
-
-# SSH & DESKTOP -----------------------------------------------
-RUN echo 'echo Starting SSHD ----------------------' >> /run.sh
-RUN echo '/usr/sbin/sshd' >> /run.sh
-RUN echo 'echo Start Desktop ----------------------' >> /run.sh
-RUN echo 'export DISPLAY=:0'>> /run.sh
-RUN echo 'xinit /bin/cutefish-session' >> /run.sh
-
-# User --------------------------------------------------------
-RUN echo "user ALL=(ALL)      ALL" >> /etc/sudoers
+#&&  echo "${TEXT1}${TEXT2}${TEXT3}" >> /run.sh               \
+# SSH & DESKTOP ----------------------------------------------\
+&&  echo 'echo Starting SSHD --------------------' >> /run.sh \
+&&  echo '/usr/sbin/sshd' >> /run.sh                          \
+&&  echo 'echo Start Desktop --------------------' >> /run.sh \
+&&  echo 'export DISPLAY=:0'>> /run.sh                        \
+&&  echo 'xinit /bin/cutefish-session' >> /run.sh             
 
 # Port Mapping ------------------------------------------------
 EXPOSE 4000/tcp

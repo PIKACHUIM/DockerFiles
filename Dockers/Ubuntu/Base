@@ -26,6 +26,10 @@ RUN echo "PermitRootLogin yes" >S> /etc/ssh/sshd_config \
  && chmod +x /run.sh && cat /etc/pam.d/sshd \
  && rm /etc/pam.d/sshd
 COPY configs/ssh-login/sshd /etc/pam.d/
+# User ---------------------------------------------------------------------------------------------
+RUN groupadd -r -g 2000 user                                  \
+&&  useradd -u 2000 -m -r -g user user                        \
+&&  echo "user ALL=(ALL)      ALL" >> /etc/sudoers
 # Port Mapping -------------------------------------------------------------------------------------
 EXPOSE 22/tcp
 CMD ["/run.sh"]
