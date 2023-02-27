@@ -25,8 +25,17 @@ RUN pacman -S tigervnc --noconfirm                                        \
 &&  ls -l /usr/share/xsessions/                                           \
 &&  touch /root/.Xauthority
 # More Software -----------------------------------------------------------
-RUN su user -c "echo -e "PIKAPIKA" | yaourt aur/google-chrome --noconfirm"
-RUN pacman -S --noconfirm firefox kwrite vlc transmission-qt gimp gwenview
+RUN su user -c "echo -e "PIKAPIKA" | yaourt aur/google-chrome --noconfirm" \
+&&  pacman -S --noconfirm firefox kwrite vlc transmission-qt gimp gwenview \
+&&  git clone https://aur.archlinux.org/yay.git && chown -R user ./yay     \
+&&  pacman -S --noconfirm cutefish go &&  cd yay                           \  
+&&  su user -c 'echo -e "PIKAPIKA" | proxychains makepkg -si --noconfirm'  \
+&&  yay -S visual-studio-code-bin
+COPY binfile/linuxqq_2.0.0.pkg.tar /
+RUN pacman -Uxvf linuxqq_2.0.0.pkg.tar --noconfirm                         \
+&&  rm linuxqq_2.0.0.pkg.tar        
+
+
 # Install OpenVGL----------------------------------------------------------
 COPY binfile/virtualgl_amd64.deb /
 RUN pacman -S --noconfirm libvdpau1 mesa-vdpau-drivers libegl1-mesa       \

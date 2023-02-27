@@ -12,7 +12,7 @@ LABEL Version=${OS_VERSION}
 LABEL Description=${OS_MESSAGE}
 # Set UP APT Sources ------------------------------------------------------------------------------
 RUN rm /etc/apt/sources.list
-COPY configs/apt-repos/ubuntu-${OS_VERSION}-163.list /etc/apt/sources.list
+COPY configs/apt-repos/ubuntu-${OS_VERSION}-ali.list /etc/apt/sources.list
 COPY configs/ssh-login/authorized_keys /root/.ssh/
 COPY configs/start-run/run.sh /run.sh
 # Install Softwares -------------------------------------------------------------------------------

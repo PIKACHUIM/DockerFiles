@@ -185,7 +185,10 @@ RUN wget -q https://packages.microsoft.com/keys/microsoft.asc \
 &&  wget "${LINK1}${LINK2}"                                   
 RUN dpkg -i google-chrome-stable_current_amd64.deb            \
 &&  rm google-chrome-stable_current_amd64.deb                 \
-&&  apt install -y code               
+&&  apt install -y code                                       
+COPY binfile/linuxqq_2.0.0.deb /
+RUN dpkg -i linuxqq_2.0.0.deb &&  rm linuxqq_2.0.0.deb                 
+
 
 # Install VNC --------------------------------------------------
 # X11VNC -------------------------------------------------------
@@ -219,7 +222,8 @@ RUN apt-get update && apt install -y tightvncserver           \
 RUN touch  /root/.Xauthority && mkdir -p  /home/user/         \
 &&  touch  /home/user/.Xauthority                             \              
 &&  chown user /home/user/.Xauthority                         
-RUN echo -e "root:root\nroot\nn\n | USER=root vncserver :0"
+RUN echo -e "ROOTROOT\nROOTROOT\nn\n" | vncpasswd -f          \
+    >> ~/.vnc/passwd
 
 # Start UP ----------------------------------------------------
 RUN echo '#!/bin/bash' > /run.sh                              \
