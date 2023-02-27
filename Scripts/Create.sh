@@ -10,7 +10,7 @@ echo "      [2] ArchOS    [ √ Server / √ CuteFishDE / × KDE / × GNOME / ×
 #echo "      [X] Deepin    [ √ Server / √ CuteFishDE / √ KDE / √ GNOME / √ DDE ]  "
 echo "   ========================================================================"
 echo 
-echo -n "   Choice Platforms Type Number(1): "
+echo -n "   Choose Platforms Type Number(1): "
 read OS_TYPE
 if [ ! $OS_TYPE ]; then
   echo Note: OS_TYPE='[1] Ubuntu'
@@ -34,7 +34,7 @@ echo "      [2] Desktop CuteFishDE [ √ SSH / √ GUI APPs / √ NoMachine / �
 #echo "      [X] Desktop Deepin DDE [ √ SSH / √ GUI APPs / √ NoMachine / √ VNC ]  "
 echo "   ========================================================================"
 echo
-echo -n "   Choice GUI Environments Type(1): "
+echo -n "   Choose GUI Environments Type(1): "
 read GUI_ENV
 if [ ! $GUI_ENV ]; then
   echo "   Note: GUI_ENV=[1] Servers"
@@ -51,7 +51,7 @@ fi
 # Config --------------------------------------------------------------------------
 source Scripts/Titles.sh
 echo "   ===========================Config Port Mapping=========================="
-#echo -n "请输入容器ID，留空需要手动配置端口  "
+#echo -n "   请输入容器ID，留空需要手动配置端口"
 echo    "   Leave blank to manually configure!"
 echo -n "   Enter Docker ID(Length=2 Like 01): "
 read USE_PID
