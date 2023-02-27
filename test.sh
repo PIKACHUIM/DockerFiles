@@ -10,14 +10,14 @@ sudo proxychains4 docker build -f dockers/Ubuntu/Desktop/CuteFishDE -t ubuntu:22
 sudo docker stop ubuntu_test
 sudo docker rm ubuntu_test
 
-sudo docker run -it \
+sudo docker run -itd \
 --network=host \
 --name=ubuntu_test \
 --privileged=true \
 --cap-add=SYS_PTRACE \
 --shm-size=1024m \
 --hostname=ubuntu_test \
-ubuntu:22.04-cuteos
+pikachuim/ubuntu:22.04-cuteos
 
 sudo docker exec ubuntu_test /bin/bash -c "echo root:pika | chpasswd"
 sudo docker exec ubuntu_test /bin/bash -c "echo user:user | chpasswd"
