@@ -157,7 +157,7 @@ D_PASSW=$(openssl rand -hex 12)
 # Password and Output ------------------------------------------------------------
 #sudo docker exec ubuntu_test /bin/bash -c "echo root:${D_PASSW} | chpasswd"
 #sudo docker exec ubuntu_test /bin/bash -c "echo user:${D_PASSW} | chpasswd"
-#echo Password: $D_NAMES $D_PASSW >> ~/docker-users.conf
+#echo Password: $D_NAMES $D_PASSW >> ~/DockerUsers.conf
 clear
 echo "     ──────────────────────────────────────────────────────────────────────"
 echo "     Congratulations! Your Docker Container has been Created Successfully! "             
