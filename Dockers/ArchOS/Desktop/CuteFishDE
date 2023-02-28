@@ -25,37 +25,34 @@ RUN pacman -S tigervnc --noconfirm                                        \
 &&  ls -l /usr/share/xsessions/                                           \
 &&  touch /root/.Xauthority
 # More Software -----------------------------------------------------------
-RUN su user -c "echo -e "PIKAPIKA" | yaourt aur/google-chrome --noconfirm" \
-&&  pacman -S --noconfirm firefox kwrite vlc transmission-qt gimp gwenview \
-&&  git clone https://aur.archlinux.org/yay.git && chown -R user ./yay     \
-&&  pacman -S --noconfirm cutefish go &&  cd yay                           \  
-&&  su user -c 'echo -e "PIKAPIKA" | proxychains makepkg -si --noconfirm'  \
-&&  yay -S visual-studio-code-bin
+RUN su user -c "echo -e "PIKAPIKA" | yaourt aur/google-chrome --noconfirm"
+#RUN pacman -S --noconfirm firefox kwrite vlc transmission-qt gimp gwenview\
+#&&  git clone https://aur.archlinux.org/yay.git && chown -R user ./yay    \
+#&&  pacman -S --noconfirm go && cd yay                                    \  
+#&&  su user -c 'echo -e "PIKAPIKA" | proxychains makepkg --noconfirm'      
 COPY binfile/linuxqq_2.0.0.pkg.tar /
-RUN pacman -Uxvf linuxqq_2.0.0.pkg.tar --noconfirm                         \
+RUN pacman -U /linuxqq_2.0.0.pkg.tar --noconfirm                          \
 &&  rm linuxqq_2.0.0.pkg.tar        
-
+#RUN yay -S visual-studio-code-bin
 
 # Install OpenVGL----------------------------------------------------------
-COPY binfile/virtualgl_amd64.deb /
-RUN pacman -S --noconfirm libvdpau1 mesa-vdpau-drivers libegl1-mesa       \
-                          libglu1-mesa                 
-RUN dpkg -i virtualgl_amd64.deb                                           \
-&&  rm virtualgl_amd64.deb                                                \
-&&  echo 'XAUTHORITY=$HOME/.Xauthority.docker' >                          \
-         /etc/profile.d/Xauthority-fix.sh                                 \
-&&  ENV_1='export LD_PRELOAD=/usr/lib/libdlfaker.so:'                     \
-&&  ENV_2='/usr/lib/libvglfaker.so:$LD_PRELOAD'                           \
-&&  echo '${ENV_1}${ENV_2}' > /etc/profile.d/virtualgl.sh                 \
-&&  sed -i 's/use-ssh-agent/no-use-ssh-agent/'                            \
-        /etc/X11/Xsession.options
+#RUN pacman -S --noconfirm 	virtualgl
+#RUN echo 'XAUTHORITY=$HOME/.Xauthority.docker' >                          \
+#         /etc/profile.d/Xauthority-fix.sh                                 \
+#&&  ENV_1='export LD_PRELOAD=/usr/lib/libdlfaker.so:'                     \
+#&&  ENV_2='/usr/lib/libvglfaker.so:$LD_PRELOAD'                           \
+#&&  echo '${ENV_1}${ENV_2}' > /etc/profile.d/virtualgl.sh                 \
+#&&  sed -i 's/use-ssh-agent/no-use-ssh-agent/'                            \
+#        /etc/X11/Xsession.options
+        
 # Run ---------------------------------------------------------------------
 RUN echo '#!/bin/bash' > /run.sh                                          \
-&&  echo 'vncserver :0' >> /run.sh                                        \
+&&  echo 'export $(dbus-launch)' >> /run.sh                               \
+#&&  echo 'vncserver :0' >> /run.sh                                       \
 &&  echo '/etc/NX/nxserver --startup' >> /run.sh                          \
 &&  echo '/etc/NX/nxserver --restart' >> /run.sh                          \
-&&  echo 'export $(dbus-launch)' >> /run.sh                               \
 &&  echo '/usr/sbin/sshd -D' >> /run.sh                                   \
+&&  echo 'xinit /bin/cutefish-session' >> /run.sh                         \
 &&  chmod +x /run.sh                  
 # Port Mapping ------------------------------------------------------------
 EXPOSE 4000/tcp

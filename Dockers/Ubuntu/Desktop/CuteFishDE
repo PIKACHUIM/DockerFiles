@@ -101,34 +101,7 @@ RUN apt-get update && apt install -y cmake build-essential    \
 &&  git clone https://github.com/cutefishos/videoplayer       \
 &&  cd videoplayer && mkdir build && cd build                 \
 &&  cmake .. && make -j16 && make install                     \
-&&  rm -rf ~/Downloads/*                                      \                                     
-&&  apt-get purge  -y --auto-remove                           \
-                   libkf5screen-dev libqt5sensors5-dev        \
-                   libxcb-icccm4-dev libmpv-dev               \
-                   libkdecorations2-dev  libdbusmenu-qt5-dev  \
-                   libxcb-randr0-dev  libxcb-xfixes0-dev      \
-                   libxcb-composite0-dev libxcb-shm0-dev      \
-                   libpulse-dev libpolkit-agent-1-dev         \
-                   libqt5x11extras5-dev libkf5kio-dev         \      
-                   libxcb-ewmh-dev libpolkit-qt5-1-dev        \
-                   libxcb-damage0-dev libkf5bluezqt-dev       \
-                   libx11-xcb-dev libkf5idletime-dev          \
-                   libxcb-dpms0-dev libxcb-dri2-0-dev         \
-                   libxcb-dri3-dev libxcb-glx0-dev            \
-                   libxcb-record0-dev xserver-xorg-dev        \
-                   libxcursor-dev libqapt-dev qtbase5-dev     \
-                   libkf5networkmanagerqt-dev libxtst-dev     \
-                   libqt5xdg-dev libicu-dev libxcb-util-dev   \
-                   libsm-dev qttools5-dev libxcb-image0-dev   \
-                   libcanberra-dev libxcb-keysyms1-dev        \
-                   libxcb-util0-dev libpam0g-dev libx11-dev   \
-                   qtbase5-dev qml-module-qtquick-controls2   \
-                   qtdeclarative5-dev qttools5-dev-tools      \
-                   qtquickcontrols2-5-dev qtdeclarative5-dev  \ 
-                   qttools5-dev qtquickcontrols2-5-dev        \
-                   qtdeclarative5-dev qml-module-qtquick2     \
-                   qtbase5-private-dev                        \               
-&& apt upgrade -y && apt clean
+&&  rm -rf ~/Downloads/*                                                                        
 
 # Install Xserver ---------------------------------------------
 RUN apt-get update && DEBIAN_FRONTEND=noninteractive          \
@@ -137,10 +110,10 @@ RUN apt-get update && DEBIAN_FRONTEND=noninteractive          \
                    xfonts-base xfonts-75dpi xfonts-100dpi     \
                    xfonts-scalable dbus-user-session          \
                    dbus-x11 xinit neofetch                                  
-COPY configs/x11server/xorg.conf /usr/share/X11/xorg.conf.d/
-COPY configs/x11server/create-pulse-clientconf.sh             \
+COPY Config/x11server/xorg.conf /usr/share/X11/xorg.conf.d/
+COPY Config/x11server/create-pulse-clientconf.sh              \
      /etc/profile.d/
-COPY configs/x11server/70-ubuntu.conf                         \
+COPY Config/x11server/70-ubuntu.conf                          \
      /etc/lightdm/lightdm.conf.d/
 RUN echo 'load-module module-native-protocol-unix '           \
     >> /etc/pulse/default.pa                                  \
@@ -148,7 +121,7 @@ RUN echo 'load-module module-native-protocol-unix '           \
     >> /etc/pulse/default.pa
 
 # Install OpenVGL----------------------------------------------
-COPY binfile/virtualgl_amd64.deb /
+COPY AppImg/virtualgl_amd64.deb /
 RUN apt update && DEBIAN_FRONTEND=noninteractive              \
     apt install -y libvdpau1 mesa-vdpau-drivers libegl1-mesa  \
                    libglu1-mesa                 
@@ -163,7 +136,7 @@ RUN dpkg -i virtualgl_amd64.deb                               \
         /etc/X11/Xsession.options
 
 # Install Nomachine -------------------------------------------
-COPY binfile/nomachine_amd64.deb /
+COPY AppImg/nomachine_amd64.deb /
 RUN dpkg -i /nomachine_amd64.deb && rm /nomachine_amd64.deb   \
 &&  sed -i '$a PhysicalDesktopAuthorization 0'                \
     /usr/NX/etc/node.cfg                                      \
@@ -171,10 +144,11 @@ RUN dpkg -i /nomachine_amd64.deb && rm /nomachine_amd64.deb   \
     /usr/NX/etc/node.cfg
                    
 # Install Softwares -------------------------------------------
-RUN apt install -y software-properties-common                 \                
+RUN apt install -y software-properties-common fcitx           \                
                    apt-transport-https wget                   \
-                   firefox kwrite vlc transmission-qt         \
+                   kwrite vlc transmission-qt                 \
                    gimp gwenview fonts-liberation libu2f-udev
+# Chrome and VSCode -------------------------------------------
 RUN wget -q https://packages.microsoft.com/keys/microsoft.asc \
     -O- | sudo apt-key add -                                  \
 &&  TEXT1="deb [arch=amd64] https://packages.microsoft.com/"  \
@@ -186,73 +160,39 @@ RUN wget -q https://packages.microsoft.com/keys/microsoft.asc \
 RUN dpkg -i google-chrome-stable_current_amd64.deb            \
 &&  rm google-chrome-stable_current_amd64.deb                 \
 &&  apt install -y code                                       
-COPY binfile/linuxqq_2.0.0.deb /
-RUN dpkg -i linuxqq_2.0.0.deb &&  rm linuxqq_2.0.0.deb                 
-
-
-# Install VNC --------------------------------------------------
-# X11VNC -------------------------------------------------------
-#RUN mkdir ~/.vnc && chmod 700 ~/.vnc && touch ~/.vnc/passwd   \
-#&&  touch  /root/.Xauthority                                  \
-#&&  apt install -y x11vnc                                     \
-#&&  mkdir -p /home/user/.vnc/ && touch /home/user/.vnc/passwd \
-#&&  chown -R user /home/user/                                 \
-#&&  x11vnc -storepasswd PIKAPIKA /home/user/.vnc/passwd       \
-#&&  echo 'session=xinit /bin/cutefish-session'                \
-#    > /home/user/.vnc/config                                  \
-#&&  echo 'geometry=1920x1080' >> /home/user/.vnc/config       \
-#&&  echo 'alwaysshared' >> /home/user/.vnc/config             \
-#&&  echo '#!/bin/sh' > /home/user/.vnc/xstartup               \
-#&&  echo 'export DISPLAY=:0' >> /home/user/.vnc/xstartup      \
-#&&  echo 'exec xinit /bin/cutefish-session &' >>              \
-#    /home/user/.vnc/xstartup                                  \
-#&&  touch  /home/user/.Xauthority                             \              
-#&&  chown user /home/user/.Xauthority
-
-# TigerVNC ----------------------------------------------------
-RUN apt-get update && apt install -y tightvncserver           \
-&& mkdir -p ~/.vnc                                            \
-&& echo 'session=xinit /bin/cutefish-session' > ~/.vnc/config \
-&& echo 'geometry=1920x1080' >> ~/.vnc/config                 \
-&& echo 'alwaysshared' >> ~/.vnc/config                       \
-&& echo '#!/bin/sh' > ~/.vnc/xstartup                         \
-&& echo 'export DISPLAY=:0' >> ~/.vnc/xstartup                \
-&& echo 'exec xinit /bin/cutefish-session &'                  \
-    >> ~/.vnc/xstartup
-RUN touch  /root/.Xauthority && mkdir -p  /home/user/         \
-&&  touch  /home/user/.Xauthority                             \              
-&&  chown user /home/user/.Xauthority                         
-RUN echo -e "ROOTROOT\nROOTROOT\nn\n" | vncpasswd -f          \
-    >> ~/.vnc/passwd
-
-# Start UP ----------------------------------------------------
-RUN echo '#!/bin/bash' > /run.sh                              \
-&&  echo 'export DISPLAY=:0' >> /run.sh                       \
-&&  echo 'echo Starting Dbus --------------------' >> /run.sh \
-&&  echo '/etc/init.d/dbus start' >> /run.sh                  \
-&&  echo 'echo Starting NX ----------------------' >> /run.sh \
-&&  echo '/etc/NX/nxserver --startup' >> /run.sh              \
-&&  echo '/etc/NX/nxserver --restart ' >> /run.sh             \
-# User VNC ---------------------------------------------------\
-# TigerVNC ---------------------------------------------------\
-&&  echo 'echo Starting VNCS --------------------' >> /run.sh \
-&&  echo 'export DISPLAY=:0' >> /run.sh                       \
-&&  echo 'USER=root vncserver -kill :0' >> /run.sh            \
-&&  echo 'rm -rf /tmp/.X11-unix/X0' >> /run.sh                \
-&&  echo 'USER=root vncserver :0' >> /run.sh                  \
-# X11VNC -----------------------------------------------------\
-&&  TEXT1="x11vnc -display :0 -auth guess -once -loop "       \
-#&&  TEXT2=" -noxdamage -repeat -rfbauth ~/.vnc/passwd "      \
-#&&  TEXT3=" -rfbport 5900 -shared &"                         \
-#&&  echo "${TEXT1}${TEXT2}${TEXT3}" >> /run.sh               \
-# SSH & DESKTOP ----------------------------------------------\
-&&  echo 'echo Starting SSHD --------------------' >> /run.sh \
-&&  echo '/usr/sbin/sshd' >> /run.sh                          \
-&&  echo 'echo Start Desktop --------------------' >> /run.sh \
-&&  echo 'export DISPLAY=:0'>> /run.sh                        \
+# QQ ----------------------------------------------------------
+#COPY AppImg/linuxqq_2.0.0.deb /
+#RUN dpkg -i linuxqq_2.0.0.deb &&  rm linuxqq_2.0.0.deb                   
+COPY AppImg/linuxqq_3.1.0.deb /
+RUN dpkg -i linuxqq_3.1.0.deb &&  rm linuxqq_3.1.0.deb   
+                      
+# Desktop Configs ----------------------------------------------------
+RUN rm -rf /root/.config/cutefishos/theme.conf                       \
+&&  rm -rf /root/.config/cutefishos/language.conf                    \
+&&  rm -rf /root/.config/cutefishos/dock_pinned.conf                 \
+&&  rm -rf /usr/share/applications/google-chrome.desktop             \
+&&  rm -rf /usr/share/applications/code.desktop
+COPY Config/Desktop/CuteOS/theme.conf /root/.config/cutefishos/
+COPY Config/Desktop/CuteOS/language.conf /root/.config/cutefishos/
+COPY Config/Desktop/CuteOS/dock_pinned.conf /root/.config/cutefishos/
+COPY Config/Desktop/CuteOS/App.desktop/code.desktop                  \
+     /usr/share/applications/code.desktop
+COPY Config/Desktop/CuteOS/App.desktop/google-chrome.desktop         \
+     /usr/share/applications/google-chrome.desktop
+# Start UP -----------------------------------------------------------
+RUN echo '#!/bin/bash' > /run.sh                                     \
+&&  echo 'export DISPLAY=:0' >> /run.sh                              \
+&&  echo 'echo Starting Dbus ---------------------------' >> /run.sh \
+&&  echo '/etc/init.d/dbus start' >> /run.sh                         \
+&&  echo 'echo Starting NX -----------------------------' >> /run.sh \
+&&  echo '/etc/NX/nxserver --startup' >> /run.sh                     \
+&&  echo '/etc/NX/nxserver --restart ' >> /run.sh                    \
+# SSH & DESKTOP -----------------------------------------------------\
+&&  echo 'echo Starting SSHD ---------------------------' >> /run.sh \
+&&  echo '/usr/sbin/sshd' >> /run.sh                                 \
+&&  echo 'echo Start Desktop ---------------------------' >> /run.sh \
 &&  echo 'xinit /bin/cutefish-session' >> /run.sh             
 
-# Port Mapping ------------------------------------------------
+# Port Mapping -------------------------------------------------------
 EXPOSE 4000/tcp
-#EXPOSE 5900/udp
 CMD ["/run.sh"]

@@ -3,11 +3,11 @@ source Scripts/Titles.sh
 
 # Choose System --------------------------------------------------------------------
 echo "   ============================Available System============================"
-echo "      [1] Ubuntu    [ √ Server / √ CuteFishDE / × KDE / × GNOME / × DDE ]  "
-echo "      [2] ArchOS    [ √ Server / √ CuteFishDE / × KDE / × GNOME / × DDE ]  "
-#echo "      [X] Debian    [ √ Server / √ CuteFishDE / √ KDE / √ GNOME / √ DDE ]  "
-#echo "      [X] Centos    [ √ Server / × CuteFishDE / × KDE / × GNOME / × DDE ]  "
-#echo "      [X] Deepin    [ √ Server / √ CuteFishDE / √ KDE / √ GNOME / √ DDE ]  "
+echo "   [1]Ubuntu [√ Server /√ CuteOS /√ KDE /√ GNOME /√ DDE /√ OpenBox /√ xfce]"
+#echo "   [2]ArchOS [√ Server /√ CuteOS /× KDE /× GNOME /× DDE /× OpenBox /× xfce]"
+#echo "   [X]Debian [√ Server /√ CuteOS /√ KDE /√ GNOME /√ DDE /× OpenBox /× xfce]"
+#echo "   [X]CentOS [√ Server /× CuteOS /× KDE /× GNOME /× DDE /× OpenBox /× xfce]"
+#echo "   [X]Deepin [√ Server /√ CuteOS /√ KDE /√ GNOME /√ DDE /× OpenBox /× xfce]"
 echo "   ========================================================================"
 echo 
 echo -n "   Choose Platforms Type Number(1): "
@@ -32,6 +32,8 @@ echo "      [2] Desktop CuteFishDE [ √ SSH / √ GUI APPs / √ NoMachine / �
 #echo "      [X] Desktop KDE Plasma [ √ SSH / √ GUI APPs / √ NoMachine / √ VNC ]  "
 #echo "      [X] Desktop GNOME Base [ √ SSH / √ GUI APPs / √ NoMachine / √ VNC ]  "
 #echo "      [X] Desktop Deepin DDE [ √ SSH / √ GUI APPs / √ NoMachine / √ VNC ]  "
+#echo "      [X] Desktop OpenBox DE [ √ SSH / √ GUI APPs / √ NoMachine / √ VNC ]  "
+#echo "      [X] Desktop Xfce4 Lite [ √ SSH / √ GUI APPs / √ NoMachine / √ VNC ]  "
 echo "   ========================================================================"
 echo
 echo -n "   Choose GUI Environments Type(1): "
