@@ -50,6 +50,10 @@ elif [ $GUI_ENV == 2 ]; then
   GUI_ENV=cuteos
 fi
 
+# GPU List ------------------------------------------------------------------------
+source Scripts/Nvidia.sh
+
+
 # Config --------------------------------------------------------------------------
 source Scripts/Titles.sh
 echo "   ===========================Config Port Mapping=========================="
@@ -66,7 +70,7 @@ else
   PM_NXSR="1${USE_PID}40";
   PM_VNCS="1${USE_PID}41";
   IN_PORT="q";
-  D_NAMES="s1v3-d${USE_PID}-user"
+  D_NAMES="DC${USE_PID}-S1V3-Docker"
   TMP1MAP="-p 1${USE_PID}01-1${USE_PID}21:1${USE_PID}01-1${USE_PID}21";
   TMP2MAP="-p 1${USE_PID}23-1${USE_PID}39:1${USE_PID}23-1${USE_PID}39";
   TMP3MAP="-p 1${USE_PID}42-1${USE_PID}99:1${USE_PID}42-1${USE_PID}99";
@@ -124,10 +128,10 @@ done
 
 # --------------------------------------------------------------------------------
 source Scripts/Titles.sh
-PORTMAP=${PORTMAP//-\\n\\n\\n}
-PORTMAP=${PORTMAP//-p/\\n\\t}
+PORTMAP_TEXT=${PORTMAP//-\\n\\n\\n}
+PORTMAP_TEXT=${PORTMAP_TEXT//-p/\\n\\t}
 echo -e "   ===========================Container Info==============================="
-echo -e "   Note: Port Mapping: $PORTMAP";
+echo -e "   Note: Port Mapping: $PORTMAP_TEXT";
 echo -e "   Note: SSH Port Use: $PM_SSHS";
 echo -e "   Note: Docker Names: $D_NAMES";
 echo -e "   ========================================================================";
@@ -141,19 +145,26 @@ elif [ $CONFIRM == 'y' ]; then
 fi
 
 # RUN Images ---------------------------------------------------------------------
-sudo docker run -itd --privileged=true \
+sudo docker run -itd \
+$GPU_LIST \
+--privileged=true \
+--shm-size=1024m \
 --name $D_NAMES \
+--cap-add SYS_ADMIN \
+--cap-add=SYS_PTRACE \
 -h $D_NAMES.13.cd1.pika.wiki \
 $PORTMAP \
 -p $PM_SSHS:22 \
 -p $PM_NXSR:4000 \
 -p $PM_VNCS:5900 \
 pikachuim/$OS_TYPE:$VERSION-server
+echo "   ==========================Enter Key to Continue========================="
+read KEY
 
 # Password and Output ------------------------------------------------------------
 D_PASSW=$(openssl rand -hex 12)
-sudo docker exec ubuntu_test /bin/bash -c "echo root:${D_PASSW} | chpasswd"
-sudo docker exec ubuntu_test /bin/bash -c "echo user:${D_PASSW} | chpasswd"
+sudo docker exec $D_NAMES /bin/bash -c "echo root:${D_PASSW} | chpasswd"
+sudo docker exec $D_NAMES /bin/bash -c "echo user:${D_PASSW} | chpasswd"
 echo Password: $D_NAMES $D_PASSW >> ~/DockerUsers.conf
 clear
 echo "     ──────────────────────────────────────────────────────────────────────"

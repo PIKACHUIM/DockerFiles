@@ -25,6 +25,9 @@ COPY Config/OpenSSH/sshd /etc/pam.d/
 # User ---------------------------------------------------------------------------------------------
 RUN groupadd -r -g 2000 user &&  useradd -u 2000 -m -r -g user user \
 &&  echo "user ALL=(ALL)      ALL" >> /etc/sudoers
+# Init ---------------------------------------------------------------------------------------------
+COPY Config/StartUP/run.service /etc/systemd/system/
 # Port Mapping -------------------------------------------------------------------------------------
 EXPOSE 22/tcp
-CMD ["/run.sh"]
+# CMD ["/run.sh"]
+CMD ["/sbin/init"]
