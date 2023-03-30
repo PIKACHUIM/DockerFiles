@@ -1,4 +1,5 @@
 #!/bin/bash
+source Scripts/Config.sh
 source Scripts/Titles.sh
 
 # Choose System --------------------------------------------------------------------
@@ -152,7 +153,7 @@ $GPU_LIST \
 --name $D_NAMES \
 --cap-add SYS_ADMIN \
 --cap-add=SYS_PTRACE \
--h $D_NAMES.13.cd1.pika.wiki \
+-h $D_NAMES.$HOSTNAME \
 $PORTMAP \
 -p $PM_SSHS:22 \
 -p $PM_NXSR:4000 \
@@ -168,15 +169,15 @@ sudo docker exec $D_NAMES /bin/bash -c "echo user:${D_PASSW} | chpasswd"
 echo Password: $D_NAMES $D_PASSW >> ~/DockerUsers.conf
 clear
 echo "     ──────────────────────────────────────────────────────────────────────"
-echo "     Congratulations! Your Docker Container has been Created Successfully! "             
+echo "     Congratulations! Your Docker Container has been Created Successfully! "
 echo "     ----------------------------------------------------------------------"
-echo "                      Container $D_NAMES                     "                                                           
+echo "                      Container $D_NAMES                     "
 echo "                      OSSystem: $OS_TYPE $VERSION            "
-echo "     ----------------------------------------------------------------------"                    
+echo "     ----------------------------------------------------------------------"
 echo "                      SSHLogin: v4-cd1.pika.wiki:$PM_SSHS    " 
-echo "                      IPV4Host: $D_NAMES.v4-cd1.pika.wiki    " 
-echo "                      IPV6Host: $D_NAMES.v6-cd1.pika.wiki    " 
-echo "                      HostName: $D_NAMES.13.cd1.pika.wiki    " 
+echo "                      IPV4Host: $D_NAMES.$IPV4HOST    " 
+echo "                      IPV6Host: $D_NAMES.$IPV6HOST    " 
+echo "                      HostName: $D_NAMES.$HOSTNAME    " 
 echo "     ----------------------------------------------------------------------"
 echo "                      Username: root                         " 
 echo "                      Password: $D_PASSW                     " 
