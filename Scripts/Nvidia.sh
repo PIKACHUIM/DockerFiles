@@ -1,5 +1,6 @@
 #!/bin/bash
 source Scripts/Titles.sh
+# GPU List ------------------------------------------------------------------------
 echo "   =============================Graphics Cards============================="
 echo "      [A] All Graphics Cards [Using All Graphics of Current Local Syatem]  "
 echo "      [N] Disabled All Cards [Don't Use Graphics of Current Local Syatem]  "

@@ -2,32 +2,40 @@
 ARG OS_VERSION=latest
 ARG OS_SYSTEMS=ubuntu
 FROM ${OS_SYSTEMS}:${OS_VERSION}
+
 # ARGS --------------------------------------------------------------------------------------------
 ARG OS_MESSAGE=""
 ARG OS_VERSION=latest
+
 # Message -----------------------------------------------------------------------------------------
 MAINTAINER Pikachu Ren <pikachuim@qq.com>
 LABEL System=${OS_SYSTEMS}
 LABEL Version=${OS_VERSION}
 LABEL Description=${OS_MESSAGE}
+
 # Set UP APT Sources ------------------------------------------------------------------------------
 RUN rm /etc/apt/sources.list
 COPY Config/APT-Rep/ubuntu-${OS_VERSION}-ali.list /etc/apt/sources.list
 COPY Config/OpenSSH/authorized_keys /root/.ssh/
 COPY Config/StartUP/run.sh /run.sh
+
 # Install Softwares -------------------------------------------------------------------------------
-RUN apt update \  
- && apt install -y openssh-server sudo vim nano  && mkdir -p /var/run/sshd && mkdir -p /root/.ssh/
+RUN apt update && apt install -y openssh-server sudo vim nano \
+&&  mkdir -p /var/run/sshd && mkdir -p /root/.ssh/
+
 # Allow SSH PAM & Password Login ------------------------------------------------------------------
-RUN echo "PermitRootLogin yes" >> /etc/ssh/sshd_config \
+RUN echo "PermitRootLogin yes" >> /etc/ssh/sshd_config 
 &&  chmod +x /run.sh && rm /etc/pam.d/sshd
 COPY Config/OpenSSH/sshd /etc/pam.d/
+
 # User ---------------------------------------------------------------------------------------------
-RUN groupadd -r -g 2000 user &&  useradd -u 2000 -m -r -g user user \
+RUN groupadd -r -g 2000 user \
+&&  useradd -u 2000 -m -r -g user user \
 &&  echo "user ALL=(ALL)      ALL" >> /etc/sudoers
+
 # Init ---------------------------------------------------------------------------------------------
 COPY Config/StartUP/run.service /etc/systemd/system/
+
 # Port Mapping -------------------------------------------------------------------------------------
 EXPOSE 22/tcp
-# CMD ["/run.sh"]
 CMD ["/sbin/init"]

@@ -1,151 +1,12 @@
 #!/bin/bash
 source Scripts/Config.sh
-source Scripts/Titles.sh
-
-# Choose System --------------------------------------------------------------------
-echo "   ============================Available System============================"
-echo "   [1]Ubuntu [√ Server /√ CuteOS /√ KDE /√ GNOME /√ DDE /√ OpenBox /√ xfce]"
-#echo "   [2]ArchOS [√ Server /√ CuteOS /× KDE /× GNOME /× DDE /× OpenBox /× xfce]"
-#echo "   [X]Debian [√ Server /√ CuteOS /√ KDE /√ GNOME /√ DDE /× OpenBox /× xfce]"
-#echo "   [X]CentOS [√ Server /× CuteOS /× KDE /× GNOME /× DDE /× OpenBox /× xfce]"
-#echo "   [X]Deepin [√ Server /√ CuteOS /√ KDE /√ GNOME /√ DDE /× OpenBox /× xfce]"
-echo "   ========================================================================"
-echo 
-echo -n "   Choose Platforms Type Number(1): "
-read OS_TYPE
-if [ ! $OS_TYPE ]; then
-  echo Note: OS_TYPE='[1] Ubuntu'
-  OS_TYPE=1
-fi
-if [ $OS_TYPE == 1 ]; then
-  source Scripts/Create/Ubuntu-Version.sh
-  OS_TYPE=ubuntu
-elif [ $OS_TYPE == 2 ]; then
-  source Scripts/Create/ArchOS-Version.sh
-  OS_TYPE=archos
-fi
-
-# Choose Desktop -------------------------------------------------------------------
-source Scripts/Titles.sh
-echo "   ============================Available Desktop==========================="
-echo "      [1] Servers No Desktop [ √ SSH / × GUI APPs / × NoMachine / × VNC ]  "
-echo "      [2] Desktop CuteFishDE [ √ SSH / √ GUI APPs / √ NoMachine / √ VNC ]  "
-#echo "      [X] Desktop KDE Plasma [ √ SSH / √ GUI APPs / √ NoMachine / √ VNC ]  "
-#echo "      [X] Desktop GNOME Base [ √ SSH / √ GUI APPs / √ NoMachine / √ VNC ]  "
-#echo "      [X] Desktop Deepin DDE [ √ SSH / √ GUI APPs / √ NoMachine / √ VNC ]  "
-#echo "      [X] Desktop OpenBox DE [ √ SSH / √ GUI APPs / √ NoMachine / √ VNC ]  "
-#echo "      [X] Desktop Xfce4 Lite [ √ SSH / √ GUI APPs / √ NoMachine / √ VNC ]  "
-echo "   ========================================================================"
-echo
-echo -n "   Choose GUI Environments Type(1): "
-read GUI_ENV
-if [ ! $GUI_ENV ]; then
-  echo "   Note: GUI_ENV=[1] Servers"
-  GUI_ENV=1
-fi
-if [ $GUI_ENV == 1 ]; then
-#  source 
-  GUI_ENV=server
-elif [ $GUI_ENV == 2 ]; then
-#  source 
-  GUI_ENV=cuteos
-fi
-
-# GPU List ------------------------------------------------------------------------
+source Scripts/Create/Select-Systems.sh
+source Scripts/Create/Select-Desktop.sh
 source Scripts/Nvidia.sh
-
-
-# Config --------------------------------------------------------------------------
-source Scripts/Titles.sh
-echo "   ===========================Config Port Mapping=========================="
-#echo -n "   请输入容器ID，留空需要手动配置端口"
-echo    "   Leave blank to manually configure!"
-echo -n "   Enter Docker ID(Length=2 Like 01): "
-read USE_PID
-if [ ! $USE_PID ]; then
-  echo "   Note: You need manually set port mapping!"
-  PORTMAP=""
-  IN_PORT=""
-else
-  PM_SSHS="1${USE_PID}22";
-  PM_NXSR="1${USE_PID}40";
-  PM_VNCS="1${USE_PID}41";
-  IN_PORT="q";
-  D_NAMES="DC${USE_PID}-S1V3-Docker"
-  TMP1MAP="-p 1${USE_PID}01-1${USE_PID}21:1${USE_PID}01-1${USE_PID}21";
-  TMP2MAP="-p 1${USE_PID}23-1${USE_PID}39:1${USE_PID}23-1${USE_PID}39";
-  TMP3MAP="-p 1${USE_PID}42-1${USE_PID}99:1${USE_PID}42-1${USE_PID}99";
-  PORTMAP="${TMP1MAP} ${TMP2MAP} ${TMP3MAP}";
-fi
-
-# --------------------------------------------------------------------------------
-while [ ! $PM_SSHS ];
-do
-  echo -n "   Enter SSH Port Mapping(XXX): "
-  read PM_SSHS
-  if [ ! $PM_SSHS ]; then
-    echo "   Error: You must enter ssh new port!!"
-  else
-    break
-  fi
-done
-
-# --------------------------------------------------------------------------------
-if [ "$IN_PORT" != "q" ]; then
-    echo "   ===========================Manually Configure==========================="
-    echo "   Note: !!!Enter 'q' to Finish Port Mapping Input!!!"
-fi
-while [ "$IN_PORT" != "q" ];
-do
-  while [ "$IN_PORT" == "" ];
-  do
-    echo -n "   Enter Port Mapping(XXX:XXX): "
-    read IN_PORT
-    if [ ! $IN_PORT ]; then
-      echo "   Error: You need enter port map, or q to exit!!!"
-    else
-        break
-    fi
-  done
-  if [ "$IN_PORT" != "q" ]; then
-    PORTMAP="${PORTMAP} -p ${IN_PORT} "
-  else
-    break
-  fi
-  IN_PORT=""
-done
-
-# --------------------------------------------------------------------------------
-while [ ! $D_NAMES ];
-do
-  echo -n "   Enter Docker Names(XXXXXXX): "
-  read D_NAMES
-  if [ ! $D_NAMES ]; then
-    echo "   Error: You must enter container name"
-  else
-        break
-  fi
-done
-
-# --------------------------------------------------------------------------------
-source Scripts/Titles.sh
-PORTMAP_TEXT=${PORTMAP//-\\n\\n\\n}
-PORTMAP_TEXT=${PORTMAP_TEXT//-p/\\n\\t}
-echo -e "   ===========================Container Info==============================="
-echo -e "   Note: Port Mapping: $PORTMAP_TEXT";
-echo -e "   Note: SSH Port Use: $PM_SSHS";
-echo -e "   Note: Docker Names: $D_NAMES";
-echo -e "   ========================================================================";
-echo -n "   Confirm to create the container? (y/n): "
-read CONFIRM
-if [ ! $CONFIRM ] || [ $CONFIRM == 'n' ] ; then
-  echo "   Warn: Not Confirmed, Exit"
-  exit 0
-elif [ $CONFIRM == 'y' ]; then
-  echo -e "   ========================================================================";
-fi
+source Scripts/Number.sh
 
 # RUN Images ---------------------------------------------------------------------
+echo -n "   Docker: "
 sudo docker run -itd \
 $GPU_LIST \
 --privileged=true \
@@ -158,11 +19,17 @@ $PORTMAP \
 -p $PM_SSHS:22 \
 -p $PM_NXSR:4000 \
 -p $PM_VNCS:5900 \
-pikachuim/$OS_TYPE:$VERSION-server
+pikachuim/$OS_TYPE:$VERSION-$GUI_ENV
+sudo docker exec $D_NAMES /bin/bash -c "systemctl daemon-reload"
+echo -n "   "
+sudo docker exec $D_NAMES /bin/bash -c "systemctl enable run" >> /dev/null
+echo -n "   Docker Restarting Container: "
+sudo docker restart $D_NAMES
 echo "   ==========================Enter Key to Continue========================="
 read KEY
 
 # Password and Output ------------------------------------------------------------
+source Scripts/Titles.sh
 D_PASSW=$(openssl rand -hex 12)
 sudo docker exec $D_NAMES /bin/bash -c "echo root:${D_PASSW} | chpasswd"
 sudo docker exec $D_NAMES /bin/bash -c "echo user:${D_PASSW} | chpasswd"
@@ -185,7 +52,7 @@ echo "                      Username: user                         "
 echo "                      Password: $D_PASSW                     " 
 echo "     ----------------------------------------------------------------------" 
 echo "     Port Mapping Details:                                   " 
-echo -e "                         $PORTMAP                         " 
+echo -e "                         $PORTMAP_TEXT                    " 
 echo "     ----------------------------------------------------------------------" 
 echo "     Note: Saved password in ~/docker-users.conf, delete if no need backup!"
 echo "     For any questions or suggestions, please visit:                       " 
