@@ -2,48 +2,39 @@
 source Scripts/Titles.sh
 # Config --------------------------------------------------------------------------
 echo "   ===========================Config Port Mapping=========================="
-#echo -n "   请输入容器ID，留空需要手动配置端口"
-echo    "   Leave blank to manually configure!"
 echo -n "   Enter Docker ID(Length=2 Like 01): "
 read USE_PID
-if [ ! $USE_PID ]; then
-  echo "   Note: You need manually set port mapping!"
-  PORTMAP=""
-  IN_PORT=""
-else
-  PM_SSHS="1${USE_PID}22";
-  PM_NXSR="1${USE_PID}40";
-  PM_VNCS="1${USE_PID}41";
-  IN_PORT="q";
-  D_NAMES="DC${USE_PID}-S1V3-Docker"
-  TMP1MAP="-p 1${USE_PID}01-1${USE_PID}21:1${USE_PID}01-1${USE_PID}21";
-  TMP2MAP="-p 1${USE_PID}23-1${USE_PID}39:1${USE_PID}23-1${USE_PID}39";
-  TMP3MAP="-p 1${USE_PID}42-1${USE_PID}99:1${USE_PID}42-1${USE_PID}99";
-  PORTMAP="${TMP1MAP} ${TMP2MAP} ${TMP3MAP}";
-fi
+D_NAMES="S1V3-OCI-${USE_PID}-CD1"
+# ==================================================
+PM_SSHS="1${USE_PID}22";
+PM_NXSR="1${USE_PID}40";
+PM_VNCS="1${USE_PID}41";
+
+
 
 # --------------------------------------------------------------------------------
-while [ ! $PM_SSHS ];
-do
-  echo -n "   Enter SSH Port Mapping(XXX): "
-  read PM_SSHS
-  if [ ! $PM_SSHS ]; then
-    echo "   Error: You must enter ssh new port!!"
-  else
-    break
-  fi
-done
+#while [ ! $PM_SSHS ];
+#do
+#  echo -n "   Enter SSH Port Mapping(XXX): "
+#  read PM_SSHS
+#  if [ ! $PM_SSHS ]; then
+#    echo "   Error: You must enter ssh new port!!"
+#  else
+#    break
+#  fi
+#done
 
 # --------------------------------------------------------------------------------
+IN_PORT=""
 if [ "$IN_PORT" != "q" ]; then
-    echo "   ===========================Manually Configure==========================="
+    echo "   ===========================Configure Port Map==========================="
     echo "   Note: !!!Enter 'q' to Finish Port Mapping Input!!!"
 fi
 while [ "$IN_PORT" != "q" ];
 do
   while [ "$IN_PORT" == "" ];
   do
-    echo -n "   Enter Port Mapping(XXX:XXX): "
+    echo -n "   Enter Port Mapping(host_port:oci_port): "
     read IN_PORT
     if [ ! $IN_PORT ]; then
       echo "   Error: You need enter port map, or q to exit!!!"
@@ -58,6 +49,13 @@ do
   fi
   IN_PORT=""
 done
+
+if [ ! $PORTMAP ]; then
+  TMP1MAP="-p 1${USE_PID}01-1${USE_PID}21:1${USE_PID}01-1${USE_PID}21";
+  TMP2MAP="-p 1${USE_PID}23-1${USE_PID}39:1${USE_PID}23-1${USE_PID}39";
+  TMP3MAP="-p 1${USE_PID}42-1${USE_PID}99:1${USE_PID}42-1${USE_PID}99";
+  PORTMAP="${TMP1MAP} ${TMP2MAP} ${TMP3MAP}";
+fi
 
 # --------------------------------------------------------------------------------
 while [ ! $D_NAMES ];
@@ -78,6 +76,7 @@ PORTMAP_TEXT=${PORTMAP_TEXT//-p/\\n\\t}
 echo -e "   ===========================Container Info==============================="
 echo -e "   Note: Port Mapping: $PORTMAP_TEXT";
 echo -e "   Note: SSH Port Use: $PM_SSHS";
+echo -e "   Note: NoMachine In: $PM_NXSR";
 echo -e "   Note: Docker Names: $D_NAMES";
 echo -e "   ========================================================================";
 echo -n "   Confirm to create the container? (y/n): "

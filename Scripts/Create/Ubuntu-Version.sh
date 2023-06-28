@@ -11,5 +11,15 @@ read VERSION
 if [ ! $VERSION ]; then
   echo Note: VERSION='22.04'
   VERSION='22.04'
+elif [ $VERSION == 1 ]; then
+  echo Note: VERSION='22.04'
+  VERSION='22.04'
+elif [ $VERSION == 2 ]; then
+  echo Note: VERSION='20.04'
+  VERSION='20.04'
+elif [ $VERSION == 3 ]; then
+  echo Note: VERSION='18.04'
+  VERSION='18.04'
 fi
+
 
