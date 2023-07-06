@@ -9,7 +9,7 @@ D_NAMES="S1V3-OCI-${USE_PID}-CD1"
 PM_SSHS="1${USE_PID}22";
 PM_NXSR="1${USE_PID}40";
 PM_VNCS="1${USE_PID}41";
-
+PV_DATA="/OCI${USE_PID}"
 
 
 # --------------------------------------------------------------------------------

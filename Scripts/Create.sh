@@ -4,7 +4,7 @@ source Scripts/Create/Select-Systems.sh
 source Scripts/Create/Select-Desktop.sh
 source Scripts/Nvidia.sh
 source Scripts/Number.sh
-
+mkdir -p "${DATAPATH}${PV_DATA}"
 # RUN Images ---------------------------------------------------------------------
 echo -n "   Docker: "
 sudo docker run -itd \
@@ -19,6 +19,7 @@ $PORTMAP \
 -p $PM_SSHS:22 \
 -p $PM_NXSR:4000 \
 -p $PM_VNCS:5900 \
+-v "${DATAPATH}${PV_DATA}:/home/user"
 pikachuim/$OS_TYPE:$VERSION-$GUI_ENV
 sudo docker exec $D_NAMES /bin/bash -c "systemctl daemon-reload"
 echo -n "   "
