@@ -1,5 +1,6 @@
 #!/bin/bash
 function LIST_OCIS {
+    source Scripts/Titles.sh
     echo "   =============================List Container============================="
     sudo docker ps $1 --format '>  {{.ID}}   {{.Names}}   {{.Image}}   {{upper .State}}\n\t\t  Networks: {{.Networks | printf "%6s"}}  Status: {{.Status}}' 
     echo "   ==========================Enter Key to Continue========================="
@@ -37,7 +38,6 @@ do
     source Scripts/Create.sh
   # List -----------------------------------------------------------------------------
   elif [ $OP_TYPE == 'l' ]; then
-    source Scripts/Titles.sh
     LIST_OCIS -a
     read KEY
   # Start ----------------------------------------------------------------------------
