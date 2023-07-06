@@ -21,11 +21,14 @@ $GPU_LIST \
 -p $PM_VNCS:5900 \
 -v "${DATAPATH}${PV_DATA}:/home/user" \
 pikachuim/$OS_TYPE:$VERSION-$GUI_ENV
-sudo docker exec $D_NAMES /bin/bash -c "systemctl daemon-reload"
-echo -n "   "
-sudo docker exec $D_NAMES /bin/bash -c "systemctl enable run" >> /dev/null
-echo -n "   Docker Restarting Container: 
-sudo docker restart $D_NAMES
+
+if [ $GUI_ENV == 'server' ]; then
+  sudo docker exec $D_NAMES /bin/bash -c "systemctl daemon-reload"
+  echo -n "   "
+  sudo docker exec $D_NAMES /bin/bash -c "systemctl enable run" >> /dev/null
+  echo -n "   Docker Restarting Container: "
+  sudo docker restart $D_NAMES
+fi
 echo "   ==========================Enter Key to Continue========================="
 read KEY
 
@@ -35,7 +38,7 @@ D_PASSW=$(openssl rand -hex 12)
 sudo docker exec $D_NAMES /bin/bash -c "echo root:${D_PASSW} | chpasswd"
 sudo docker exec $D_NAMES /bin/bash -c "echo user:${D_PASSW} | chpasswd"
 echo Password: $D_NAMES $D_PASSW >> ~/DockerUsers.conf
-clear
+source Scripts/Titles.sh
 echo "     ──────────────────────────────────────────────────────────────────────"
 echo "     Congratulations! Your Docker Container has been Created Successfully! "
 echo "     ----------------------------------------------------------------------"
@@ -55,9 +58,9 @@ echo "                      Password: $D_PASSW                     "
 echo "     ----------------------------------------------------------------------" 
 echo "     Port Mapping Details:" 
 echo -e "            $PORTMAP_TEXT" 
-echo ""
+echo "                                                                           "
 echo "     Container Volume Map:" 
-echo ""
+echo "                                                                           "
 echo -e "         Host: ${DATAPATH}${PV_DATA} -> OCI: /home/user" 
 echo "     ----------------------------------------------------------------------" 
 echo "     Note: Saved password in ~/docker-users.conf, delete if no need backup!"
@@ -65,4 +68,4 @@ echo "     For any questions or suggestions, please visit:                      
 echo "                      https://github.com/PIKACHUIM/DockerFiles             " 
 echo "     ──────────────────────────────────────────────────────────────────────"
 echo "     ======================= Enter to back to menu ========================"
-read _
+read KEY
