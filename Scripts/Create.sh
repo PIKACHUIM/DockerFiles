@@ -5,8 +5,10 @@ source Scripts/Create/Select-Desktop.sh
 source Scripts/Nvidia.sh
 source Scripts/Number.sh
 sudo mkdir -p "${DATAPATH}${PV_DATA}"
+mkdir -p ~/DockerUsers/
 # RUN Images ---------------------------------------------------------------------
 echo -n "   Docker: "
+
 sudo docker run -itd \
 $GPU_LIST \
 --privileged=true \
@@ -29,15 +31,24 @@ if [ $GUI_ENV == 'server' ]; then
   echo -n "   Docker Restarting Container: "
   sudo docker restart $D_NAMES
 fi
+D_PASSW=$(openssl rand -hex 12)
+echo Password: $D_NAMES $D_PASSW >> ~/DockerUsers.conf
+ssh-keygen -f ~/DockerUsers/$D_NAMES -t ed25519 -N '' -C $D_NAMES -q
+SSH_KEY=$(cat ~/DockerUsers/$D_NAMES)
+SSH_PUB=$(cat ~/DockerUsers/$D_NAMES.pub)
+HOM_DIR=$(echo ~)
+sudo docker exec $D_NAMES /bin/bash -c "echo root:${D_PASSW} | chpasswd"
+sudo docker exec $D_NAMES /bin/bash -c "echo user:${D_PASSW} | chpasswd"
+sudo docker exec $D_NAMES /bin/bash -c "mkdir -p ~/.ssh/"
+sudo docker exec $D_NAMES /bin/bash -c "mkdir -p /home/user/.ssh/"
+sudo docker exec $D_NAMES /bin/bash -c "echo ${SSH_PUB} >> ~/.ssh/authorized_keys"
+sudo docker exec $D_NAMES /bin/bash -c "echo ${SSH_PUB} >> /home/user/.ssh/authorized_keys"
+sudo docker exec $D_NAMES /bin/bash -c "chmod 600 ~/.ssh/authorized_keys"
+sudo docker exec $D_NAMES /bin/bash -c "chmod 600 /home/user/.ssh/authorized_keys"
 echo "   ==========================Enter Key to Continue========================="
 read KEY
 
 # Password and Output ------------------------------------------------------------
-source Scripts/Titles.sh
-D_PASSW=$(openssl rand -hex 12)
-sudo docker exec $D_NAMES /bin/bash -c "echo root:${D_PASSW} | chpasswd"
-sudo docker exec $D_NAMES /bin/bash -c "echo user:${D_PASSW} | chpasswd"
-echo Password: $D_NAMES $D_PASSW >> ~/DockerUsers.conf
 source Scripts/Titles.sh
 echo "     ──────────────────────────────────────────────────────────────────────"
 echo "     Congratulations! Your Docker Container has been Created Successfully! "
@@ -59,9 +70,11 @@ echo "     ---------------------------------------------------------------------
 echo "     Port Mapping Details:" 
 echo -e "            $PORTMAP_TEXT" 
 echo "                                                                           "
-echo "     Container Volume Map:" 
-echo "                                                                           "
+echo "     Container Volume Map:"                                                "
 echo -e "         Host: ${DATAPATH}${PV_DATA} -> OCI: /home/user" 
+echo "
+echo "     SSHLogin Private Key:"                                                "
+sed 's/^/     &/g' "${HOM_DIR}/DockerUsers/${D_NAMES}"
 echo "     ----------------------------------------------------------------------" 
 echo "     Note: Saved password in ~/docker-users.conf, delete if no need backup!"
 echo "     For any questions or suggestions, please visit:                       " 
