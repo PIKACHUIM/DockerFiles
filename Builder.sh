@@ -6,15 +6,6 @@ source Scripts/Create/Select-Desktop.sh
 echo -n "   Would you like to test after build?(Y): "
 read TEST_FLAG
 
-if [ ! $TEST_FLAG ]; then
-  echo "   Note: TEST_FLAG=[Y] True"
-  TEST_FLAG=true
-fi
-if [ $TEST_FLAG==Y ]; then
-  TEST_FLAG=true
-else 
-  TEST_FLAG=false
-fi
 # Build ---------------------------------------------------
 source Scripts/Titles.sh
 sudo proxychains4 docker build\
@@ -23,9 +14,10 @@ sudo proxychains4 docker build\
   --build-arg OS_VERSION=${VERSION} \
   ./Dockers
 echo "     ======================= Enter to back to menu ========================"
-read _
+read KEY
+
 # Test ----------------------------------------------------
-if [ $TEST_FLAG==true ]; then
+if [ $TEST_FLAG == 'Y' ]; then
   source Scripts/Titles.sh
   sudo docker stop ${OS_TYPE}_${GUI_ENV}
   sudo docker rm   ${OS_TYPE}_${GUI_ENV}
