@@ -28,6 +28,7 @@ if [ $GUI_ENV == 'server' ]; then
   sudo docker exec $D_NAMES /bin/bash -c "systemctl daemon-reload"
   echo -n "   "
   sudo docker exec $D_NAMES /bin/bash -c "systemctl enable run" >> /dev/null
+  sudo docker exec $D_NAMES /bin/bash -c "systemctl enable start" >> /dev/null
   echo -n "   Docker Restarting Container: "
   sudo docker restart $D_NAMES
 fi

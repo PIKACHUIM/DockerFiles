@@ -27,6 +27,9 @@ RUN apt update && apt install -y openssh-server sudo vim nano \
 RUN echo "PermitRootLogin yes" >> /etc/ssh/sshd_config 
 &&  chmod +x /run.sh && rm /etc/pam.d/sshd
 COPY Config/OpenSSH/sshd /etc/pam.d/
+RUN echo "#!/bin/bash" > /run.sh            \
+&&  echo "mkdir /run/sshd" >> /run.sh       \
+&&  echo "/usr/sbin/sshd -D" >> /run.sh     \
 
 # User ---------------------------------------------------------------------------------------------
 RUN groupadd -r -g 2000 user \
