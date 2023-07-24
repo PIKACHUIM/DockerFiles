@@ -4,7 +4,8 @@ source Scripts/Create/Select-Systems.sh
 source Scripts/Create/Select-Desktop.sh
 source Scripts/Nvidia.sh
 source Scripts/Number.sh
-sudo mkdir -p "${DATAPATH}${PV_DATA}"
+sudo mkdir -p "${DATAPATH}${PV_DATA}/user"
+sudo mkdir -p "${DATAPATH}${PV_DATA}/root"
 mkdir -p ~/DockerUsers/
 # RUN Images ---------------------------------------------------------------------
 echo -n "   Docker: "
@@ -21,7 +22,8 @@ $GPU_LIST \
 -p $PM_SSHS:22 \
 -p $PM_NXSR:4000 \
 -p $PM_VNCS:5900 \
--v "${DATAPATH}${PV_DATA}:/home/user" \
+-v "${DATAPATH}${PV_DATA}/root:/root" \
+-v "${DATAPATH}${PV_DATA}/user:/home/user" \
 pikachuim/$OS_TYPE:$VERSION-$GUI_ENV
 
 if [ $GUI_ENV == 'server' ]; then

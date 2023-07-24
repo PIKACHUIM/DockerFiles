@@ -1,7 +1,7 @@
 # Images ------------------------------------------------------------------------------------------
 ARG OS_VERSION=latest
 ARG OS_SYSTEMS=archlinux
-FROM ${OS_SYSTEMS}:${OS_VERSION}
+FROM archlinux:${OS_VERSION}
 # ARGS --------------------------------------------------------------------------------------------
 ARG OS_MESSAGE=""
 ARG OS_VERSION=latest
