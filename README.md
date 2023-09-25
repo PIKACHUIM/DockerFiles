@@ -30,3 +30,14 @@
   1. Enter  `b` and press `Enter`
   2. Choose system and desktop
 
+## 支持镜像 / Support Imgs
+
+|   系统/OS    | Server | CuteFishDE | KDE Plasma | GNOME | Deepin | OpenBox | Xfce4 |
+| :----------: | :----: | :--------: | :--------: | :---: | :----: | :-----: | :---: |
+| Ubuntu 20.04 |   ✔    |     ✔      |     ×      |   ×   |   ×    |  ✔(*)   |   ×   |
+| Ubuntu 22.04 |   ✔    |     ✔      |     ×      |   ×   |   ×    |  ✔(*)   |   ×   |
+| ArchOS News  |   ✔    |     ✔      |     ×      |   ×   |   ×    |    ×    |   ×   |
+| Debian Dock  |   ×    |     ×      |     ×      |   ×   |   ×    |    ×    |   ×   |
+| Centos Dock  |   ×    |     ×      |     ×      |   ×   |   ×    |    ×    |   ×   |
+| Deepin Dock  |   ×    |     ×      |     ×      |   ×   |   ×    |    ×    |   ×   |
+
