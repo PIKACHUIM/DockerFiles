@@ -9,6 +9,7 @@ echo "      [4] Desktop GNOME Base [ √ SSH / √ GUI APPs / √ NoMachine / �
 echo "      [5] Desktop Deepin DDE [ √ SSH / √ GUI APPs / √ NoMachine / √ VNC ]  "
 echo "      [6] Desktop OpenBox DE [ √ SSH / √ GUI APPs / √ NoMachine / √ VNC ]  "
 echo "      [7] Desktop Xfce4 Lite [ √ SSH / √ GUI APPs / √ NoMachine / √ VNC ]  "
+echo "      [0] X11 UI Environment [ √ SSH / √ GUI APPs / √ NoMachine / √ VNC ]  "
 echo "   ========================================================================"
 echo
 echo -n "   Choose GUI Environments Type(1): "
@@ -38,4 +39,7 @@ elif [ $GUI_ENV == 6 ]; then
 elif [ $GUI_ENV == 7 ]; then
   GUI_ENV=xfce_4
   DC_FILE=Xfce4
+elif [ $GUI_ENV == 0 ]; then
+  GUI_ENV=x11gui
+  DC_FILE=Desktop
 fi

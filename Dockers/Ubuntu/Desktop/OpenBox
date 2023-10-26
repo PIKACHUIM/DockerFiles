@@ -1,17 +1,28 @@
+# syntax=docker/dockerfile:1.3-labs
 # Images ------------------------------------------------------
-FROM pikachuim/ubuntu:22.04-x11gui
+ARG OS_VERSION=latest
+ARG OS_SYSTEMS=ubuntu
+FROM pikachuim/${OS_SYSTEMS}:${OS_VERSION}-x11gui
 # Install -----------------------------------------------------
-RUN apt-get install -y software-properties-common             \
-&&  apt-get update && DEBIAN_FRONTEND=noninteractive          \
+RUN echo "#!/bin/sh\nexit 0" > /usr/sbin/policy-rc.d
+RUN --security=insecure apt-get update                        \
+&&  apt-get install -y software-properties-common             \
+&&  DEBIAN_FRONTEND=noninteractive          \
     apt install -y openbox git cmake obconf pcmanfm fbpanel
 
 # Install Softwares -------------------------------------------
 RUN echo "#!/bin/sh\nexit 0" > /usr/sbin/policy-rc.d
-RUN DEBIAN_FRONTEND=noninteractive                            \
-apt install -y software-properties-common fcitx               \                
-                   apt-transport-https wget lightdm           \
-                   kwrite vlc transmission-qt                 \
-                   gimp gwenview fonts-liberation libu2f-udev
+RUN --security=insecure DEBIAN_FRONTEND=noninteractive apt install -y \
+    software-properties-common fcitx apt-transport-https wget 
+    
+RUN --security=insecure DEBIAN_FRONTEND=noninteractive apt install -y \
+    kwrite transmission-qt gimp gwenview fonts-liberation libu2f-udev
+    
+RUN --security=insecure DEBIAN_FRONTEND=noninteractive apt install -y \
+    vlc 
+    
+# lightdm
+
 # Chrome and VSCode -------------------------------------------
 RUN wget -q https://packages.microsoft.com/keys/microsoft.asc \
     -O- | sudo apt-key add -                                  \

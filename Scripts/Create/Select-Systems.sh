@@ -4,9 +4,9 @@ source Scripts/Titles.sh
 echo "   ============================Available System============================"
 echo "   [1]Ubuntu [√ Server /√ CuteOS /√ KDE /√ GNOME /√ DDE /√ OpenBox /√ xfce]"
 echo "   [2]ArchOS [√ Server /√ CuteOS /× KDE /× GNOME /× DDE /× OpenBox /× xfce]"
-echo "   [3]Debian [√ Server /√ CuteOS /√ KDE /√ GNOME /√ DDE /× OpenBox /× xfce]"
-echo "   [4]CentOS [√ Server /× CuteOS /× KDE /× GNOME /× DDE /× OpenBox /× xfce]"
-echo "   [5]Deepin [√ Server /√ CuteOS /√ KDE /√ GNOME /√ DDE /× OpenBox /× xfce]"
+#echo "   [3]Debian [√ Server /√ CuteOS /√ KDE /√ GNOME /√ DDE /× OpenBox /× xfce]"
+#echo "   [4]CentOS [√ Server /× CuteOS /× KDE /× GNOME /× DDE /× OpenBox /× xfce]"
+#echo "   [5]Deepin [√ Server /√ CuteOS /√ KDE /√ GNOME /√ DDE /× OpenBox /× xfce]"
 echo "   ========================================================================"
 echo 
 echo -n "   Choose Platforms Type Number(1): "

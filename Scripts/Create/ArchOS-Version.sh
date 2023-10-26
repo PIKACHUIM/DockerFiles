@@ -10,8 +10,7 @@ read VERSION
 if [ ! $VERSION ]; then
   echo Note: VERSION='[1] Latest'
   VERSION='latest'
-fi
 elif [ $VERSION == 1 ]; then
   echo Note: VERSION='latest'
   VERSION='latest'
-
+fi

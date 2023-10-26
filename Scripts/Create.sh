@@ -35,7 +35,7 @@ if [ $GUI_ENV == 'server' ]; then
   sudo docker restart $D_NAMES
 fi
 D_PASSW=$(openssl rand -hex 12)
-echo Password: $D_NAMES $D_PASSW >> ~/DockerUsers.conf
+echo Password: $D_NAMES $D_PASSW >> ~/DockerUsers/DockerUsers.conf
 ssh-keygen -f ~/DockerUsers/$D_NAMES -t ed25519 -N '' -C $D_NAMES -q
 SSH_KEY=$(cat ~/DockerUsers/$D_NAMES)
 SSH_PUB=$(cat ~/DockerUsers/$D_NAMES.pub)
