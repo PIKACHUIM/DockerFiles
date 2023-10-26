@@ -19,41 +19,30 @@
   2. Choose system and desktop
   3. Use SSH/NoMachine to connect docker
 
-## 手动启动 / Manual Run
-
-- ### Ubuntu
-
-  ```shell
-  sudo docker run -itd \
-      --network=host \
-      --name=ubuntu_server \
-      --privileged=true \
-      --cap-add=SYS_PTRACE \
-      --cap-add SYS_ADMIN \
-      --shm-size=1024m \
-      --hostname=ubuntu_server \
-  	pikachuim/ubuntu:22.04-server
-  ```
-
-- 
-
 ## 构建镜像 / Build Images
 
-- ### Ubuntu
+- ### 使用脚本 / Use Script
 
-  - #### Server
+  ```shell
+  ./Manager.sh
+  ```
 
-    ```shell
-    sudo proxychains4 docker build\
-      -f Dockers/Ubuntu/Base \
-      -t pikachuim/ubuntu:22.04-server \
-      --build-arg OS_VERSION=22.04 \
-      ./Dockers
-    ```
+  1. Enter  `b` and press `Enter`
+  2. Choose system and desktop
 
-    
+## 支持镜像 / Support Imgs
 
-  - 
+|   系统/OS    | Server | CuteFishDE | KDE Plasma | GNOME | Deepin | OpenBox | Xfce4 |
+| :----------: | :----: | :--------: | :--------: | :---: | :----: | :-----: | :---: |
+| Ubuntu 20.04 |   ✔    |     ✔      |     ×      |   ×   |   ×    |  ✔(*)   |   ×   |
+| Ubuntu 22.04 |   ✔    |     ✔      |     ×      |   ×   |   ×    |  ✔(*)   |   ×   |
+| ArchOS News  |   ✔    |     ✔      |     ×      |   ×   |   ×    |    ×    |   ×   |
+| Debian Dock  |   ×    |     ×      |     ×      |   ×   |   ×    |    ×    |   ×   |
+| Centos Dock  |   ×    |     ×      |     ×      |   ×   |   ×    |    ×    |   ×   |
+| Deepin Dock  |   ×    |     ×      |     ×      |   ×   |   ×    |    ×    |   ×   |
 
+### 备注 / Hints
 
+1. 标注了(*)的表示支持，但存在使用问题
+2. Ubuntu 18.04已于2023Q1不再维护支持
 
