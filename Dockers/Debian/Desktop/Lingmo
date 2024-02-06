@@ -80,7 +80,7 @@ RUN dpkg -i google-chrome-stable_current_amd64.deb            \
 # QQ ----------------------------------------------------------                 
 RUN wget -O ntqq.deb https://dldir1.qq.com/qqfile/qq/QQNT/7c0c5cc3/linuxqq_3.2.5-21357_amd64.deb
 RUN dpkg -i ntqq.deb &&  rm ntqq.deb
- 
+RUN DEBIAN_FRONTEND=noninteractive apt -y install lingmoui
 # Desktop Configs ----------------------------------------------------
 RUN rm -rf /root/.config/cutefishos/theme.conf                       \
 &&  rm -rf /root/.config/cutefishos/language.conf                    \

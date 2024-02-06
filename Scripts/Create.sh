@@ -48,7 +48,6 @@ sudo docker exec $D_NAMES /bin/bash -c "echo ${SSH_PUB} >> ~/.ssh/authorized_key
 sudo docker exec $D_NAMES /bin/bash -c "echo ${SSH_PUB} >> /home/user/.ssh/authorized_keys"
 sudo docker exec $D_NAMES /bin/bash -c "chmod 600 ~/.ssh/authorized_keys"
 sudo docker exec $D_NAMES /bin/bash -c "chmod 600 /home/user/.ssh/authorized_keys"
-
 echo "   ==========================Enter Key to Continue========================="
 read KEY
 
@@ -60,10 +59,7 @@ echo "----------------------------------------------------------------------"
 echo "                 Container $D_NAMES                     "
 echo "                 OSSystem: $OS_TYPE $VERSION            "
 echo "----------------------------------------------------------------------"
-echo "                 SSHLogin: $DOMAIN_T:$PM_SSHS    "
-if [ $GUI_ENV != 'server' ]; then
 echo "                 NXServer: $DOMAIN_T:$PM_NXSR    "
-fi
 echo "                 IPV4Host: $D_NAMES.$IPV4HOST    " 
 echo "                 IPV6Host: $D_NAMES.$IPV6HOST    " 
 echo "                 HostName: $D_NAMES.$HOSTNAME    "
