@@ -2,8 +2,8 @@
 
 source Scripts/Titles.sh
 echo "   ============================Available Version==========================="
-echo "      [1] Debian 12 bookworm   [ ¡Ì Now Recommend / Support Until 2028 ]    "
-echo "      [2] Debian 11 Bullseye   [ ¡Á Not Recommend / Support Until 2025 ]    "
+echo "      [1] Debian 12 bookworm   [ âˆš Now Recommend / Support Until 2028 ]    "
+echo "      [2] Debian 11 Bullseye   [ Ã— Not Recommend / Support Until 2025 ]    "
 echo "   ========================================================================"
 echo
 echo -n "   Choice System Version Number(1): "

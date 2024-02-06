@@ -1,6 +1,13 @@
 # Images ------------------------------------------------------
-FROM pikachuim/ubuntu:22.04-x11gui
-# Install -----------------------------------------------------
+# syntax=docker/dockerfile:1.3-labs
+ARG OS_VERSION=latest
+ARG OS_SYSTEMS=debian
+FROM pikachuim/${OS_SYSTEMS}:${OS_VERSION}-x11gui
+# ARGS --------------------------------------------------------------------------------------------
+ARG OS_MESSAGE="Pikachu Docker Lingmo"
+ARG OS_VERSION=latest
+
+# Install Base Desktop Software--------------------------------
 RUN apt-get update && apt install -y cmake build-essential    \
                    debhelper git extra-cmake-modules          \     
 && DEBIAN_FRONTEND=noninteractive apt install -y              \
@@ -32,76 +39,24 @@ RUN apt-get update && apt install -y cmake build-essential    \
                    qtquickcontrols2-5-dev qtdeclarative5-dev  \ 
                    qttools5-dev qtquickcontrols2-5-dev        \
                    qtdeclarative5-dev qml-module-qtquick2     \
-                   qtbase5-private-dev                        \
-# Desktop Build -----------------------------------------------
-&&  mkdir -p ~/Downloads/cutefish && cd ~/Downloads/cutefish  \
-&&  git clone https://github.com/cutefishos/libcutefish.git   \
-&&  cd libcutefish && dpkg-buildpackage -uc -us -b -j16       \
-&&  cd ~/Downloads/cutefish                                   \
-&&  git clone https://github.com/cutefishos/fishui            \
-&&  cd fishui && dpkg-buildpackage -uc -us -b -j16            \
-&&  cd ~/Downloads/cutefish                                   \
-&&  git clone https://github.com/cutefishos/kwin-plugins      \
-&&  cd kwin-plugins && dpkg-buildpackage -uc -us -b -j16      \
-&&  cd ~/Downloads/cutefish                                   \
-&&  git clone https://github.com/cutefishos/launcher          \
-&&  cd launcher && dpkg-buildpackage -uc -us -b -j16          \
-&&  cd ~/Downloads/cutefish                                   \
-&&  git clone https://github.com/cutefishos/qt-plugins        \
-&&  cd qt-plugins && dpkg-buildpackage -uc -us -b -j16        \
-&&  cd ~/Downloads/cutefish                                   \
-&&  git clone https://github.com/cutefishos/wallpapers        \
-&&  cd wallpapers && dpkg-buildpackage -uc -us -b -j16        \
-&&  cd ~/Downloads/cutefish && apt-get install ./*.deb -y     \
-&&  cd ~/Downloads/cutefish                                   \
-&&  git clone https://github.com/cutefishos/dock              \
-&&  cd dock && dpkg-buildpackage -uc -us -b -j16              \
-&&  cd ~/Downloads/cutefish                                   \
-&&  git clone https://github.com/cutefishos/filemanager       \
-&&  cd filemanager && dpkg-buildpackage -uc -us -b -j16       \
-&&  cd ~/Downloads/cutefish                                   \
-&&  git clone https://github.com/cutefishos/terminal.git      \
-&&  cd terminal && dpkg-buildpackage -uc -us -b -j16          \
-&&  cd ~/Downloads/cutefish                                   \
-&&  git clone https://github.com/cutefishos/settings          \
-&&  cd settings && dpkg-buildpackage -uc -us -b -j16          \
-&&  cd ~/Downloads/cutefish                                   \
-&&  git clone https://github.com/cutefishos/statusbar         \
-&&  cd statusbar && dpkg-buildpackage -uc -us -b -j16         \
-&&  cd ~/Downloads/cutefish                                   \
-&&  git clone https://github.com/cutefishos/core              \
-&&  cd core && dpkg-buildpackage -uc -us -b -j16              \        
-&&  cd ~/Downloads/cutefish                                   \
-&&  sudo apt-get install ./*.deb -y                           \ 
-&&  cd ~/Downloads/cutefish                                   \
-&&  git clone https://github.com/cutefishos/calculator        \
-&&  cd calculator && mkdir build && cd build                  \
-&&  cmake .. && make -j16 && make install                     \ 
-&&  cd ~/Downloads/cutefish                                   \
-&&  git clone https://github.com/cutefishos/icons             \
-&&  cd icons && mkdir build && cd build                       \
-&&  cmake .. && make -j16 && make install                     \
-&&  cd ~/Downloads/cutefish                                   \
-&&  git clone https://github.com/cutefishos/screenlocker      \
-&&  cd screenlocker && mkdir build && cd build                \
-&&  cmake .. && make -j16 && make install                     \
-&&  cd ~/Downloads/cutefish                                   \
-&&  git clone https://github.com/cutefishos/sddm-theme        \
-&&  cd sddm-theme && mkdir build && cd build                  \
-&&  cmake .. && make -j16 && make install                     \
-&&  cd ~/Downloads/cutefish                                   \
-&&  git clone https://github.com/cutefishos/debinstaller      \
-&&  cd debinstaller && mkdir build && cd build                \
-&&  cmake .. && make -j16 && make install                     \
-&&  cd ~/Downloads/cutefish                                   \
-&&  git clone https://github.com/cutefishos/gtk-themes        \
-&&  cd gtk-themes && mkdir build && cd build                  \
-&&  cmake .. && make -j16 && make install                     \
-&&  cd ~/Downloads/cutefish                                   \
-&&  git clone https://github.com/cutefishos/videoplayer       \
-&&  cd videoplayer && mkdir build && cd build                 \
-&&  cmake .. && make -j16 && make install                     \
-&&  rm -rf ~/Downloads/*                                                                        
+                   qtbase5-private-dev                                                         
+# Install Desktop ---------------------------------------------
+RUN echo -e '\ndeb https://packages.lingmo.org polaris main pkg common' \
+>> /etc/apt/sources.list                                      \
+&&  cat /etc/apt/sources.list                                 \
+&&  DEBIAN_FRONTEND=noninteractive apt -y install wget curl   \
+&&  sed -i 's/deb.debian.org/mirrors.ustc.edu.cn/g'           \
+    /etc/apt/sources.list.d/debian.sources                    \
+&&  wget http://mirrors.packages.lingmo.org/key/lingmo.gpg    \ 
+&&  apt-key add ./lingmo.gpg  && apt update
+RUN DEBIAN_FRONTEND=noninteractive apt -y install lingmo-dock \
+calamares-settings-lingmo liblingmo lingmo-daemon lingmo-core \
+lingmo-ocr lingmo-launcher lingmo-calculator lingmo-cherryimg \
+lingmo-cursor-themes lingmo-debinstaller lingmo-gettext-tools \
+lingmo-calculator lingmo-filemanager lingmo-screenlocker sudo \
+lingmo-gtk-themes lingmo-kwin-plugins lingmo-screenshot vim   \
+lingmo-plymouth lingmo-sddm-theme lingmo-qt-plugins screen 
+
 
 # Install Softwares -------------------------------------------
 RUN echo "#!/bin/sh\nexit 0" > /usr/sbin/policy-rc.d
@@ -123,8 +78,8 @@ RUN dpkg -i google-chrome-stable_current_amd64.deb            \
 &&  rm google-chrome-stable_current_amd64.deb                 \
 &&  apt install -y code                                       
 # QQ ----------------------------------------------------------                 
-COPY AppImg/linuxqq_3.1.1_amd64.deb /
-RUN dpkg -i linuxqq_3.1.1_amd64.deb &&  rm linuxqq_3.1.1_amd64.deb 
+RUN wget -O ntqq.deb https://dldir1.qq.com/qqfile/qq/QQNT/7c0c5cc3/linuxqq_3.2.5-21357_amd64.deb
+RUN dpkg -i ntqq.deb &&  rm ntqq.deb
  
 # Desktop Configs ----------------------------------------------------
 RUN rm -rf /root/.config/cutefishos/theme.conf                       \
@@ -132,9 +87,9 @@ RUN rm -rf /root/.config/cutefishos/theme.conf                       \
 &&  rm -rf /root/.config/cutefishos/dock_pinned.conf                 \
 &&  rm -rf /usr/share/applications/google-chrome.desktop             \
 &&  rm -rf /usr/share/applications/code.desktop
-COPY Config/Desktop/CuteOS/theme.conf /root/.config/cutefishos/
-COPY Config/Desktop/CuteOS/language.conf /root/.config/cutefishos/
-COPY Config/Desktop/CuteOS/dock_pinned.conf /root/.config/cutefishos/
+COPY Config/Desktop/CuteOS/theme.conf /root/.config/lingmoos/
+COPY Config/Desktop/CuteOS/language.conf /root/.config/lingmoos/
+COPY Config/Desktop/CuteOS/dock_pinned.conf /root/.config/lingmoos/
 COPY Config/Desktop/CuteOS/App.desktop/code.desktop                  \
      /usr/share/applications/code.desktop
 COPY Config/Desktop/CuteOS/App.desktop/google-chrome.desktop         \
@@ -142,7 +97,7 @@ COPY Config/Desktop/CuteOS/App.desktop/google-chrome.desktop         \
 
 # DESKTOP ------------------------------------------------------------
 RUN echo 'echo Start Desktop ---------------------------' >> /run.sh \
-&&  echo 'nohup xinit /bin/cutefish-session &' >> /run.sh             
+&&  echo 'nohup xinit /bin/lingmo-session &' >> /run.sh             
 
 # Port Mapping -------------------------------------------------------
 EXPOSE 4000/tcp
