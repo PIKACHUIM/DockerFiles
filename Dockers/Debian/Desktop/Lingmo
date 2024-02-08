@@ -55,15 +55,18 @@ lingmo-ocr lingmo-launcher lingmo-calculator lingmo-cherryimg \
 lingmo-cursor-themes lingmo-debinstaller lingmo-gettext-tools \
 lingmo-calculator lingmo-filemanager lingmo-screenlocker sudo \
 lingmo-gtk-themes lingmo-kwin-plugins lingmo-screenshot vim   \
-lingmo-plymouth lingmo-sddm-theme lingmo-qt-plugins screen 
-
+lingmo-plymouth lingmo-qt-plugins screen lingmo-wallpapers    \
+lingmoui lingmo-systemicons fonts-wqy-zenhei locales
+RUN echo "zh_CN.UTF-8 UTF-8" >> /etc/locale.gen				  \
+&&  echo "LANG=zh_CN.UTF-8" >> /etc/locale.conf               \
+&&  DEBIAN_FRONTEND=noninteractive dpkg-reconfigure locales
 
 # Install Softwares -------------------------------------------
 RUN echo "#!/bin/sh\nexit 0" > /usr/sbin/policy-rc.d
 RUN DEBIAN_FRONTEND=noninteractive                            \
-apt install -y software-properties-common fcitx               \                
-                   apt-transport-https wget lightdm           \
-                   kwrite vlc transmission-qt                 \
+apt install -y software-properties-common wget lightdm        \                
+                   apt-transport-https fcitx5-chinese-addons  \
+                   kwrite vlc transmission-qt  fcitx5         \
                    gimp gwenview fonts-liberation libu2f-udev
 # Chrome and VSCode -------------------------------------------
 RUN wget -q https://packages.microsoft.com/keys/microsoft.asc \
@@ -76,7 +79,8 @@ RUN wget -q https://packages.microsoft.com/keys/microsoft.asc \
 &&  wget "${LINK1}${LINK2}"                                   
 RUN dpkg -i google-chrome-stable_current_amd64.deb            \
 &&  rm google-chrome-stable_current_amd64.deb                 \
-&&  apt install -y code                                       
+&&  apt install -y code     
+                                  
 # QQ ----------------------------------------------------------                 
 RUN wget -O ntqq.deb https://dldir1.qq.com/qqfile/qq/QQNT/7c0c5cc3/linuxqq_3.2.5-21357_amd64.deb
 RUN dpkg -i ntqq.deb &&  rm ntqq.deb
@@ -87,17 +91,21 @@ RUN rm -rf /root/.config/cutefishos/theme.conf                       \
 &&  rm -rf /root/.config/cutefishos/dock_pinned.conf                 \
 &&  rm -rf /usr/share/applications/google-chrome.desktop             \
 &&  rm -rf /usr/share/applications/code.desktop
-COPY Config/Desktop/CuteOS/theme.conf /root/.config/lingmoos/
-COPY Config/Desktop/CuteOS/language.conf /root/.config/lingmoos/
-COPY Config/Desktop/CuteOS/dock_pinned.conf /root/.config/lingmoos/
-COPY Config/Desktop/CuteOS/App.desktop/code.desktop                  \
-     /usr/share/applications/code.desktop
-COPY Config/Desktop/CuteOS/App.desktop/google-chrome.desktop         \
-     /usr/share/applications/google-chrome.desktop
+COPY Config/Desktop/Lingmo/dock_pinned.conf /root/.config/lingmoos/
+#COPY Config/Desktop/Lingmo/theme.conf /root/.config/lingmoos/
+#COPY Config/Desktop/Lingmo/language.conf /root/.config/lingmoos/
+#COPY Config/Desktop/Lingmo/App.desktop/code.desktop                  \
+#     /usr/share/applications/code.desktop
+#COPY Config/Desktop/Lingmo/App.desktop/google-chrome.desktop         \
+#     /usr/share/applications/google-chrome.desktop
 
 # DESKTOP ------------------------------------------------------------
+#&&  echo 'systemctl stop sddm' >> /run.sh 
+#&&  echo 'nohup xinit /bin/lingmo-session &' >> /run.sh                   
 RUN echo 'echo Start Desktop ---------------------------' >> /run.sh \
-&&  echo 'nohup xinit /bin/lingmo-session &' >> /run.sh             
+&&  echo 'nohup LC_ALL=zh_CN.UTF-8 startx &' >> /run.sh   
+
+
 
 # Port Mapping -------------------------------------------------------
 EXPOSE 4000/tcp

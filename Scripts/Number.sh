@@ -74,10 +74,13 @@ source Scripts/Titles.sh
 PORTMAP_TEXT=${PORTMAP//-\\n\\n\\n}
 PORTMAP_TEXT=${PORTMAP_TEXT//-p/\\n\\t}
 echo -e "   ===========================Container Info==============================="
-echo -e "   Note: Port Mapping: $PORTMAP_TEXT";
-echo -e "   Note: SSH Port Use: $PM_SSHS";
-echo -e "   Note: NoMachine In: $PM_NXSR";
-echo -e "   Note: Docker Names: $D_NAMES";
+echo -e "   Port Mapping: $PORTMAP_TEXT";
+echo -e "   SSHD Porting: $PM_SSHS";
+echo -e "   NXD Services: $PM_NXSR";
+echo -e "   Docker  Name: $D_NAMES";
+echo -e "   System  Name: $OS_TYPE";
+echo -e "   System  Vers: $VERSION";
+echo -e "   Desktop Type: $GUI_ENV";
 echo -e "   ========================================================================";
 echo -n "   Confirm to create the container? (y/n): "
 read CONFIRM
