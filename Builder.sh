@@ -3,7 +3,14 @@ source Scripts/Titles.sh
 source Scripts/Create/Select-Systems.sh
 source Scripts/Create/Select-Desktop.sh
 # Choose -------------------------------------------------
-echo -n "   Would you like to test after build?(Y): "
+echo -e  ""
+echo -e  "   =========================== Build Configs ============================"
+echo -e  "   Build Systems: ${OS_UPPE} "
+echo -e  "   Build Desktop: ${GUI_ENV} "
+echo -e  "   Build Version: ${VERSION} "
+echo -e  "   ======================================================================"
+echo -e  ""
+echo -n  "   Would you like to test after build?(Y): "
 read TEST_FLAG
 
 # Build ---------------------------------------------------

@@ -2,14 +2,14 @@
 source Scripts/Titles.sh
 # Choose Desktop -------------------------------------------------------------------
 echo "   ============================Available Desktop==========================="
-echo "      [1] Servers No Desktop [ √ SSH / × GUI APPs / × NoMachine / × VNC ]  "
-echo "      [2] Desktop CuteFishDE [ √ SSH / √ GUI APPs / √ NoMachine / √ VNC ]  "
-echo "      [3] Desktop KDE Plasma [ √ SSH / √ GUI APPs / √ NoMachine / √ VNC ]  "
-echo "      [4] Desktop GNOME Base [ √ SSH / √ GUI APPs / √ NoMachine / √ VNC ]  "
-echo "      [5] Desktop Deepin DDE [ √ SSH / √ GUI APPs / √ NoMachine / √ VNC ]  "
-echo "      [6] Desktop OpenBox DE [ √ SSH / √ GUI APPs / √ NoMachine / √ VNC ]  "
-echo "      [7] Desktop Xfce4 Lite [ √ SSH / √ GUI APPs / √ NoMachine / √ VNC ]  "
-echo "      [0] X11 UI Environment [ √ SSH / √ GUI APPs / √ NoMachine / √ VNC ]  "
+echo "   [1] Servers No Desktop    [ √ SSH / × GUI APPs / × NoMachine / × VNC ]  "
+echo "   [2] Desktop CuteFishDE    [ √ SSH / √ GUI APPs / √ NoMachine / √ VNC ]  "
+echo "   [3] Desktop KDE Plasma    [ √ SSH / √ GUI APPs / √ NoMachine / √ VNC ]  "
+echo "   [4] Desktop GNOME Base    [ √ SSH / √ GUI APPs / √ NoMachine / √ VNC ]  "
+echo "   [5] Desktop Deepin DDE    [ √ SSH / √ GUI APPs / √ NoMachine / √ VNC ]  "
+echo "   [6] Desktop OpenBox DE    [ √ SSH / √ GUI APPs / √ NoMachine / √ VNC ]  "
+echo "   [7] Desktop Xfce4 Lite    [ √ SSH / √ GUI APPs / √ NoMachine / √ VNC ]  "
+echo "   [0] X11 UI Environment    [ √ SSH / √ GUI APPs / √ NoMachine / √ VNC ]  "
 echo "   ========================================================================"
 echo
 echo -n "   Choose GUI Environments Type(1): "
