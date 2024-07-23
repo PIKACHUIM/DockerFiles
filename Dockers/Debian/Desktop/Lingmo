@@ -1,0 +1,112 @@
+# Images ------------------------------------------------------
+# syntax=docker/dockerfile:1.3-labs
+ARG OS_VERSION=latest
+ARG OS_SYSTEMS=debian
+FROM pikachuim/${OS_SYSTEMS}:${OS_VERSION}-x11gui
+# ARGS --------------------------------------------------------------------------------------------
+ARG OS_MESSAGE="Pikachu Docker Lingmo"
+ARG OS_VERSION=latest
+
+# Install Base Desktop Software--------------------------------
+RUN apt-get update && apt install -y cmake build-essential    \
+                   debhelper git extra-cmake-modules          \     
+&& DEBIAN_FRONTEND=noninteractive apt install -y              \
+                   ninja-build devscripts kwin-dev            \
+                   modemmanager-qt-dev tzdata                 \
+                   xserver-xorg-input-libinput-dev            \
+                   xserver-xorg-input-synaptics-dev           \
+                   libkf5screen-dev libqt5sensors5-dev        \
+                   libxcb-icccm4-dev libmpv-dev               \
+                   libkdecorations2-dev  libdbusmenu-qt5-dev  \
+                   libxcb-randr0-dev  libxcb-xfixes0-dev      \
+                   libxcb-composite0-dev libxcb-shm0-dev      \
+                   libpulse-dev libpolkit-agent-1-dev         \
+                   libqt5x11extras5-dev libkf5kio-dev         \      
+                   libxcb-ewmh-dev libpolkit-qt5-1-dev        \
+                   libxcb-damage0-dev libkf5bluezqt-dev       \
+                   libx11-xcb-dev libkf5idletime-dev          \
+                   libxcb-dpms0-dev libxcb-dri2-0-dev         \
+                   libxcb-dri3-dev libxcb-glx0-dev            \
+                   libxcb-record0-dev xserver-xorg-dev        \
+                   libxcursor-dev libqapt-dev qtbase5-dev     \
+                   libkf5networkmanagerqt-dev libxtst-dev     \
+                   libqt5xdg-dev libicu-dev libxcb-util-dev   \
+                   libsm-dev qttools5-dev libxcb-image0-dev   \
+                   libcanberra-dev libxcb-keysyms1-dev        \
+                   libxcb-util0-dev libpam0g-dev libx11-dev   \
+                   qtbase5-dev qml-module-qtquick-controls2   \
+                   qtdeclarative5-dev qttools5-dev-tools      \
+                   qtquickcontrols2-5-dev qtdeclarative5-dev  \ 
+                   qttools5-dev qtquickcontrols2-5-dev        \
+                   qtdeclarative5-dev qml-module-qtquick2     \
+                   qtbase5-private-dev                                                         
+# Install Desktop ---------------------------------------------
+RUN echo -e '\ndeb https://packages.lingmo.org polaris main pkg common' \
+>> /etc/apt/sources.list                                      \
+&&  cat /etc/apt/sources.list                                 \
+&&  DEBIAN_FRONTEND=noninteractive apt -y install wget curl   \
+&&  sed -i 's/deb.debian.org/mirrors.ustc.edu.cn/g'           \
+    /etc/apt/sources.list.d/debian.sources                    \
+&&  wget http://mirrors.packages.lingmo.org/key/lingmo.gpg    \ 
+&&  apt-key add ./lingmo.gpg  && apt update
+RUN DEBIAN_FRONTEND=noninteractive apt -y install lingmo-dock \
+calamares-settings-lingmo liblingmo lingmo-daemon lingmo-core \
+lingmo-ocr lingmo-launcher lingmo-calculator lingmo-cherryimg \
+lingmo-cursor-themes lingmo-debinstaller lingmo-gettext-tools \
+lingmo-calculator lingmo-filemanager lingmo-screenlocker sudo \
+lingmo-gtk-themes lingmo-kwin-plugins lingmo-screenshot vim   \
+lingmo-plymouth lingmo-qt-plugins screen lingmo-wallpapers    \
+lingmoui lingmo-systemicons fonts-wqy-zenhei locales
+RUN echo "zh_CN.UTF-8 UTF-8" >> /etc/locale.gen				  \
+&&  echo "LANG=zh_CN.UTF-8" >> /etc/locale.conf               \
+&&  DEBIAN_FRONTEND=noninteractive dpkg-reconfigure locales
+
+# Install Softwares -------------------------------------------
+RUN echo "#!/bin/sh\nexit 0" > /usr/sbin/policy-rc.d
+RUN DEBIAN_FRONTEND=noninteractive                            \
+apt install -y software-properties-common wget lightdm        \                
+                   apt-transport-https fcitx5-chinese-addons  \
+                   kwrite vlc transmission-qt  fcitx5         \
+                   gimp gwenview fonts-liberation libu2f-udev
+# Chrome and VSCode -------------------------------------------
+RUN wget -q https://packages.microsoft.com/keys/microsoft.asc \
+    -O- | sudo apt-key add -                                  \
+&&  TEXT1="deb [arch=amd64] https://packages.microsoft.com/"  \
+&&  TEXT2="repos/vscode stable main"                          \
+&&  add-apt-repository "${TEXT1}${TEXT2}"                     \
+&&  LINK1="https://dl.google.com/linux/direct/"               \
+&&  LINK2="google-chrome-stable_current_amd64.deb"            \
+&&  wget "${LINK1}${LINK2}"                                   
+RUN dpkg -i google-chrome-stable_current_amd64.deb            \
+&&  rm google-chrome-stable_current_amd64.deb                 \
+&&  apt install -y code     
+                                  
+# QQ ----------------------------------------------------------                 
+RUN wget -O ntqq.deb https://dldir1.qq.com/qqfile/qq/QQNT/7c0c5cc3/linuxqq_3.2.5-21357_amd64.deb
+RUN dpkg -i ntqq.deb &&  rm ntqq.deb
+RUN DEBIAN_FRONTEND=noninteractive apt -y install lingmoui
+# Desktop Configs ----------------------------------------------------
+RUN rm -rf /root/.config/cutefishos/theme.conf                       \
+&&  rm -rf /root/.config/cutefishos/language.conf                    \
+&&  rm -rf /root/.config/cutefishos/dock_pinned.conf                 \
+&&  rm -rf /usr/share/applications/google-chrome.desktop             \
+&&  rm -rf /usr/share/applications/code.desktop
+COPY Config/Desktop/Lingmo/dock_pinned.conf /root/.config/lingmoos/
+#COPY Config/Desktop/Lingmo/theme.conf /root/.config/lingmoos/
+#COPY Config/Desktop/Lingmo/language.conf /root/.config/lingmoos/
+#COPY Config/Desktop/Lingmo/App.desktop/code.desktop                  \
+#     /usr/share/applications/code.desktop
+#COPY Config/Desktop/Lingmo/App.desktop/google-chrome.desktop         \
+#     /usr/share/applications/google-chrome.desktop
+
+# DESKTOP ------------------------------------------------------------
+#&&  echo 'systemctl stop sddm' >> /run.sh 
+#&&  echo 'nohup xinit /bin/lingmo-session &' >> /run.sh                   
+RUN echo 'echo Start Desktop ---------------------------' >> /run.sh \
+&&  echo 'nohup LC_ALL=zh_CN.UTF-8 startx &' >> /run.sh   
+
+
+
+# Port Mapping -------------------------------------------------------
+EXPOSE 4000/tcp
+CMD ["/sbin/init"]
